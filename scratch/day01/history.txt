@@ -1,0 +1,196 @@
+cd docker-workshop/aug6/
+docker container ls
+docker
+docker container run nginx
+docker container ls
+docker container run nginx
+docker container ls
+docker container stop 8b101ae2a781 7ac
+docker container ls
+docker container ls -a
+docker container start thirsty_curran 8b101
+docker container ls
+docker container rm 8b101ae2a781 7ac901ab63d4
+docker container rm -f 8b101ae2a781 7ac901ab63d4
+docker container ls -a
+docker container prune
+docker container run -d --name web01 nginx
+docker container ls
+docker ps
+docker container inspect web01
+docker container run rm -fweb01
+docker container run rm -f web01
+docker container rm -f web01
+docker container run -d --name web01 -p 8081:80 nginx
+docker container run -d --name web02 -p 8082:80 nginx
+docker container inspect web01
+docker container ls
+docker container exec -it web02 sh
+docker container exec -it web02 bash
+#docker container run alpine
+docker container prune
+docker container ls
+docker container run alpine
+docker container ls
+docker container ls -a
+docker container run alpine ping google.com
+docker container ls
+docker container logs 84f463c24408
+docker container ls -a
+docker container logs 84f463c24408
+docker container ls -a
+docker container stop affectionate_borg
+docker container prune
+docker container ls
+docker image ls
+docker image pull nginx
+docker image pull nginx
+docker image ls | grep nginx | grep latest
+docker image pull nginx:alpine
+docker image ls | grep nginx | grep alpine
+docker image ls | grep nginx | grep latest
+docker inspect c82521676580
+docker image history nginx 
+docker container ls
+docker container rm -f b41dc605e65f 0ffacc643c72
+docker container prune
+docker container run -p 8081:80 -d nginx
+docker container ls
+docker container exec -it c4eb56c528e0 bash
+docker container ls
+docker container stop elated_poincare
+docker commit --help
+docker commit elated_poincare projcode
+docker image ls | grep projcode
+docker image history projcode
+docker image tag projcode p2code
+docker image rm p2code
+docker image history nginx
+docker container run -p 8082:80 -d projcode
+docker-machine ls
+docker image ls | grep projcode
+docker container run -it alpine bash
+docker container run -it alpine sh
+docker container ls
+docker container ls -a
+docker commit feb209b8ea2a alpine_apache2
+docker image history alpine_apache2 
+docker container run -d -p 8083:80 alpine_apache2 httpd -D FOREGROUND
+docker container ls
+docker container ls -a
+docker container prune
+docker container ls -a
+mkdir alpine_apache2
+cd alpine_apache2/
+ls
+ls
+ls
+docker image history nginx
+ls
+docker build -t alpine_apache2:1 .
+docker image tag alpine_apache2:1 alpine_apache2:latest
+docker container run -d -p 8084:80 --name web01 alpine_apache2:1
+docker container ls
+docker container ls -a
+docker container logs 9c46945bf2fd
+docker container exec -it 9c46945bf2fd sh
+docker image history alpine_apache2
+docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+docker image ls | grep alpine_apache2
+docker image history alpine_apache2
+docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+docker image rm -f 369fe644e9dc
+docker image ls | grep adityaprabhakara
+docker image -q -p
+docker image ls -q -p
+docker image ls -q
+docker image ls | grep adityaprabhakara | cut -f 1 -d " "
+docker image rm -f $(docker image ls | grep adityaprabhakara | cut -f 1 -d " ")
+docker image ls | grep adityaprabhakara
+docker image rm -f adityaprabhakara/code adityaprabhakara/alpine_apache2
+docker image prune
+docker image ls | grep adityaprabhakara
+#docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+docker login
+docker image push alpine_apache2
+docker image tag alpine_apache2 adityaprabhakara/alpine_apache2
+docker image push adityaprabhakara/alpine_apache2
+ls
+cd ..
+ls
+mkdir code
+cd code
+ls
+docker container ls
+docker exec  web01 ls /var/www
+docker exec  -it web01 sh
+cd ..
+tree
+ls
+cd code
+ls
+docker build -t adityaprabhakara/code:1 -t adityaprabhakara/code .
+docker image push adityaprabhakara/code
+docker image history adityaprabhakara/code
+history
+docker container ls
+docker container prune
+docker container ls
+docker container rm -f $(docker container -q -p)
+docker container -
+
+docker container rm -f $(docker container ls -q -p)
+docker container ls -q
+docker container rm -f $(docker container ls -q)
+docker container ls
+docker container run --name web01 nginx:alpine
+docker container run -d --name web02 nginx:alpine
+docker container ls
+docker network prune
+docker container ls
+docker container inspect web01 
+docker container inspect web02
+docker exec web01 ping 172.17.0.3
+docker container run -d --name web03 nginx:alpine
+docker network ls
+docker network inspect bridge
+docker network create web01_web02
+docker network ls
+docker inspect network web01_web02
+docker network attach --help
+docker network connect --help
+docker network connect web01_web02 web01
+docker container inspect web01 | grep -i ipaddress
+docker network disconnect bridge web01
+docker container inspect web01 | grep -i ipaddress
+history | tail -n 15
+history | tail -n 30
+docker exec web01 ping 172.17.0.3
+docker network connect web01_web02 web02
+docker network disconnect bridge web02
+docker container inspect web02 | grep -i ipaddress
+docker exec web01 ping 172.18.0.3
+docker exec web01 ping web02
+docker network create web02_web03
+docker network attach web02_web03 web03
+docker network connect web02_web03 web03
+docker network connect web02_web03 web02
+docker network disconnect bridge web03
+docker exec web01 ping web02
+docker exec web02 ping web03
+docker exec web01 ping web03
+docker network create
+docker network create --help
+docker container run -d --name --network web02_web03 --ipaddress 172.19.0.20 web04 nginx:alpine
+docker container run -d --name web04 --network web02_web03 --ipaddress 172.19.0.20 nginx:alpine
+docker container run --help | grep -i address
+docker container run -d --name web04 --network web02_web03 --ip 172.19.0.20 nginx:alpine
+docker network create my_static_nw --subnet 172.30.0.0/16 --gateway 172.30.0.1
+docker inspect my_static_nw
+docker container run -d --name web04 --network my_static_nw --ip 172.30.0.20 nginx:alpine
+docker container rm -f "web04"
+docker container run -d --name web04 --network my_static_nw --ip 172.30.0.20 nginx:alpine
+docker container inspect web04
+#docker network create my_static_nw --subnet 172.30.0.0/16 --gateway 172.30.0.1
+history > history.txt

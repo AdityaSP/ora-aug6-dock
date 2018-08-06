@@ -1,0 +1,2186 @@
+/d/docker-workshop/aug6/alpine_apache2
+λ ls
+Dockerfile
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image history nginx
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+c82521676580        12 days ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+
+<missing>           12 days ago         /bin/sh -c #(nop)  STOPSIGNAL [SIGTERM]         0B
+
+<missing>           12 days ago         /bin/sh -c #(nop)  EXPOSE 80/tcp                0B
+
+<missing>           12 days ago         /bin/sh -c ln -sf /dev/stdout /var/log/nginx…   22B
+<missing>           12 days ago         /bin/sh -c set -x  && apt-get update  && apt…   53.7MB
+<missing>           12 days ago         /bin/sh -c #(nop)  ENV NJS_VERSION=1.15.2.0.…   0B
+
+<missing>           12 days ago         /bin/sh -c #(nop)  ENV NGINX_VERSION=1.15.2-…   0B
+
+<missing>           2 weeks ago         /bin/sh -c #(nop)  LABEL maintainer=NGINX Do…   0B
+
+<missing>           2 weeks ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
+
+<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:919939fa022472751…   55.3MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ ls
+Dockerfile
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker build -t alpine_apache2:1 .
+Sending build context to Docker daemon  2.048kB
+Step 1/5 : FROM alpine
+ ---> 11cd0b38bc3c
+Step 2/5 : RUN apk update
+ ---> Using cache
+ ---> 54af38792d07
+Step 3/5 : RUN apk add apache2
+ ---> Using cache
+ ---> 943ab50ca35f
+Step 4/5 : RUN mkdir /run/apache2
+ ---> Using cache
+ ---> 4e85b40f241b
+Step 5/5 : CMD httpd -D FOREGROUND
+ ---> Using cache
+ ---> 07800f814ceb
+Successfully built 07800f814ceb
+Successfully tagged alpine_apache2:1
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image tag alpine_apache2:1 alpine_apache2:latest
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker container run -d -p 8084:80 --name web01 alpine_apache2:1
+9c46945bf2fdd496d0d71e9c4f6d55fe2fc936d180da66c5685ede69c6163d26
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9c46945bf2fd        alpine_apache2:1    "/bin/sh -c 'httpd -…"   6 seconds ago       Up 2 seconds        0.0.0.0:8084->80/tcp   web01
+5ed8b57c6870        8e809f85fb49        "httpd -D FOREGROUND"    22 minutes ago      Up 22 minutes       0.0.0.0:8083->80/tcp   cranky_villani
+9a14dee81262        projcode            "nginx -g 'daemon of…"   2 hours ago         Up 2 hours          0.0.0.0:8082->80/tcp   infallible_hawking
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9c46945bf2fd        alpine_apache2:1    "/bin/sh -c 'httpd -…"   2 minutes ago       Up 2 minutes        0.0.0.0:8084->80/tcp   web01
+5ed8b57c6870        8e809f85fb49        "httpd -D FOREGROUND"    24 minutes ago      Up 24 minutes       0.0.0.0:8083->80/tcp   cranky_villani
+9a14dee81262        projcode            "nginx -g 'daemon of…"   2 hours ago         Up 2 hours          0.0.0.0:8082->80/tcp   infallible_hawking
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker container logs 9c46945bf2fd
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.4. Set the 'ServerName' directive globally to suppress this message
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker container exec -it 9c46945bf2fd sh
+/ # cd /var
+/var # bash
+sh: bash: not found
+/var # cd log
+/var/log # ls
+apache2
+/var/log # cd apache2
+/var/log/apache2 # ls
+access.log  error.log
+/var/log/apache2 # cd
+~ # cd /var/www
+/var/www # ls
+localhost  logs       modules    run
+/var/www # cd localhost
+/var/www/localhost # ls
+cgi-bin  htdocs
+/var/www/localhost # cd htdocs
+/var/www/localhost/htdocs # ls
+index.html
+/var/www/localhost/htdocs # cat index.html
+<html><body><h1>It works!</h1></body></html>
+/var/www/localhost/htdocs # exit
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image history alpine_apache2
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+07800f814ceb        7 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "http…   0B
+
+4e85b40f241b        7 days ago          /bin/sh -c mkdir /run/apache2                   0B
+
+943ab50ca35f        7 days ago          /bin/sh -c apk add apache2                      3.25MB
+54af38792d07        7 days ago          /bin/sh -c apk update                           1.27MB
+11cd0b38bc3c        4 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+
+<missing>           4 weeks ago         /bin/sh -c #(nop) ADD file:25f61d70254b9807a…   4.41MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : FROM alpine
+ ---> 11cd0b38bc3c
+Step 2/3 : RUN apk update && apk add apache2 && mkdir /run/apache2
+ ---> Using cache
+ ---> 369fe644e9dc
+Step 3/3 : CMD httpd -D FOREGROUND
+ ---> Using cache
+ ---> 807c9dc5adfe
+Successfully built 807c9dc5adfe
+Successfully tagged alpine_apache2:2
+Successfully tagged alpine_apache2:latest
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls | grep alpine_apache2
+adityaprabhakara/alpine_apache2   1.1                 807c9dc5adfe        7 days ago
+    8.94MB
+alpine_apache2                    2                   807c9dc5adfe        7 days ago
+    8.94MB
+alpine_apache2                    latest              807c9dc5adfe        7 days ago
+    8.94MB
+alpine_apache2                    1                   07800f814ceb        7 days ago
+    8.94MB
+adityaprabhakara/alpine_apache2   latest              93292ececbc3        7 days ago
+    8.94MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image history alpine_apache2
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+807c9dc5adfe        7 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "http…   0B
+
+369fe644e9dc        7 days ago          /bin/sh -c apk update && apk add apache2 && …   4.53MB
+11cd0b38bc3c        4 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+
+<missing>           4 weeks ago         /bin/sh -c #(nop) ADD file:25f61d70254b9807a…   4.41MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/4 : FROM alpine
+ ---> 11cd0b38bc3c
+Step 2/4 : RUN apk update && apk add apache2 && mkdir /run/apache2
+ ---> Using cache
+ ---> 369fe644e9dc
+Step 3/4 : RUN apk update
+ ---> Running in 287797d48334
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/community/x86_64/APKINDEX.tar.gz
+v3.8.0-50-g26af5876d6 [http://dl-cdn.alpinelinux.org/alpine/v3.8/main]
+v3.8.0-48-gb9378282d4 [http://dl-cdn.alpinelinux.org/alpine/v3.8/community]
+OK: 9536 distinct packages available
+Removing intermediate container 287797d48334
+ ---> ed17caca8a85
+Step 4/4 : CMD httpd -D FOREGROUND
+ ---> Running in ace75a44780a
+Removing intermediate container ace75a44780a
+ ---> eb69f2c9ac38
+Successfully built eb69f2c9ac38
+Successfully tagged alpine_apache2:2
+Successfully tagged alpine_apache2:latest
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/4 : FROM alpine
+ ---> 11cd0b38bc3c
+Step 2/4 : RUN apk update && apk add apache2 && mkdir /run/apache2
+ ---> Using cache
+ ---> 369fe644e9dc
+Step 3/4 : RUN apk update
+ ---> Using cache
+ ---> ed17caca8a85
+Step 4/4 : CMD httpd -D FOREGROUND
+ ---> Using cache
+ ---> eb69f2c9ac38
+Successfully built eb69f2c9ac38
+Successfully tagged alpine_apache2:2
+Successfully tagged alpine_apache2:latest
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image rm -f 369fe644e9dc
+Error response from daemon: conflict: unable to delete 369fe644e9dc (cannot be forced) - image has dependent child images
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls | grep adityaprabhakara
+adityaprabhakara/code             1.1                 6dde432651d8        7 days ago
+    8.94MB
+adityaprabhakara/alpine_apache2   1.1                 807c9dc5adfe        7 days ago
+    8.94MB
+adityaprabhakara/alpine_apache2   latest              93292ececbc3        7 days ago
+    8.94MB
+adityaprabhakara/code             latest              902b648968ac        12 days ago
+    8.59MB
+adityaprabhakara/ping_ubuntu      1.1                 7ad29b5918d6        2 weeks ago
+    122MB
+adityaprabhakara/ping_ubuntu      latest              7ad29b5918d6        2 weeks ago
+    122MB
+adityaprabhakara/al-apache        latest              081e2c158e0b        4 weeks ago
+    8.59MB
+adityaprabhakara/nginx-mycod      latest              734fe457eee4        4 weeks ago
+    109MB
+adityaprabhakara/alpine-mine-2    latest              de4c43ad67eb        5 weeks ago
+    109MB
+adityaprabhakara/alpine-mine      latest              b8f2457a1273        5 weeks ago
+    109MB
+adityaprabhakara/al-apache        myown               41edb7c47c59        3 months ago
+    8.59MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image -q -p
+unknown shorthand flag: 'q' in -q
+See 'docker image --help'.
+
+Usage:  docker image COMMAND
+
+Manage images
+
+Options:
+
+
+Commands:
+  build       Build an image from a Dockerfile
+  history     Show the history of an image
+  import      Import the contents from a tarball to create a filesystem image
+  inspect     Display detailed information on one or more images
+  load        Load an image from a tar archive or STDIN
+  ls          List images
+  prune       Remove unused images
+  pull        Pull an image or a repository from a registry
+  push        Push an image or a repository to a registry
+  rm          Remove one or more images
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+Run 'docker image COMMAND --help' for more information on a command.
+
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls -q -p
+unknown shorthand flag: 'p' in -p
+See 'docker image ls --help'.
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls -q
+eb69f2c9ac38
+eb69f2c9ac38
+8e809f85fb49
+7c34bdfe8e1c
+2958885d5107
+080e27e0ae2e
+6dde432651d8
+807c9dc5adfe
+07800f814ceb
+93292ececbc3
+6bb891430fb6
+c84981744e59
+24566b03af66
+0312e1ade932
+de950da11440
+36f3464a2197
+c82521676580
+902b648968ac
+902b648968ac
+902b648968ac
+902b648968ac
+a9bd1984ae0f
+c21bac3a8154
+ac13bf39fc60
+ac13bf39fc60
+d97d0fbbf9e3
+8796092606d7
+7ad29b5918d6
+7ad29b5918d6
+705c62f1feff
+8b89e48b5f15
+c356247174ed
+94af1f614752
+2cb0d9787c4d
+b2b03e9146e1
+920e5c5c8bed
+11cd0b38bc3c
+11cd0b38bc3c
+da579b235e92
+be73942dd248
+04f3c6456d7e
+dea77f43f431
+dea77f43f431
+c8338aced5d8
+1cfc0593900b
+081e2c158e0b
+734fe457eee4
+de4c43ad67eb
+b8f2457a1273
+5699ececb21c
+d0abd7deeeea
+4082f5f17ebd
+41edb7c47c59
+a8a59477268d
+a83fdef28f6b
+ae513a47849c
+452a96d81c30
+d1fd7d86a825
+3fd9065eaf02
+3fd9065eaf02
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls | grep adityaprabhakara | cut -f 1 -d " "
+adityaprabhakara/code
+adityaprabhakara/alpine_apache2
+adityaprabhakara/alpine_apache2
+adityaprabhakara/code
+adityaprabhakara/ping_ubuntu
+adityaprabhakara/ping_ubuntu
+adityaprabhakara/al-apache
+adityaprabhakara/nginx-mycod
+adityaprabhakara/alpine-mine-2
+adityaprabhakara/alpine-mine
+adityaprabhakara/al-apache
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image rm -f $(docker image ls | grep adityaprabhakara | cut -f 1 -d " ")
+Untagged: adityaprabhakara/code:latest
+Untagged: adityaprabhakara/code@sha256:a0f833e9aaab780f698a53617575bc69452973f21596ca7ef19b8ab041f606cf
+Untagged: adityaprabhakara/alpine_apache2:latest
+Untagged: adityaprabhakara/alpine_apache2@sha256:7ab3f8fa9dfa41c909e1fda66d211744636c9363cc4bc861f688c8a1dced1de6
+Deleted: sha256:93292ececbc32d8d79909ae1f62b319e39de359bf73a0558f9d3570a2b8f6693
+Deleted: sha256:42d2e8fc7f28ae19619f8b3bf7c0f5a032af277575ccebe4374365abc1dfa566
+Untagged: adityaprabhakara/ping_ubuntu:latest
+Untagged: adityaprabhakara/al-apache:latest
+Deleted: sha256:081e2c158e0bdfd0e209710151bb6ded83e4da9f0f3347d7454abeef32ac71dc
+Deleted: sha256:ba43166f7a3e452068f69109bc03ca09ddafd1d835a5452a5a07271e7e0330b1
+Untagged: adityaprabhakara/nginx-mycod:latest
+Untagged: adityaprabhakara/nginx-mycod@sha256:aec88b7125e70a5b52b8b3c10558c47f73d00338ce7c63f279790af05591e497
+Deleted: sha256:734fe457eee43eef2d4a169508b8f6d944e68d720a2a2129a42376c026414691
+Deleted: sha256:9e0632ed3c32e7595ad5e28a44fb94e72f88c3d424e032b80e2b607446b9da57
+Untagged: adityaprabhakara/alpine-mine-2:latest
+Deleted: sha256:de4c43ad67ebe0dd38e72bbd4d8051f72c0095c6b6c24d92b6137dbd6b08b711
+Deleted: sha256:42f4f64fdccf9c7095ff869c58aba5c77ddaa76881cedab0162d4feaa8466064
+Untagged: adityaprabhakara/alpine-mine:latest
+Deleted: sha256:b8f2457a1273a2f5e6adc4ddb50b500b33b63158e958d87e893bea796b4209f6
+Deleted: sha256:aeba29902381a53f7cd3283bd8f7a779de2f3f6c73d3d8fd66c12ad7d5d54248
+Error: No such image: adityaprabhakara/alpine_apache2
+Error: No such image: adityaprabhakara/code
+Error: No such image: adityaprabhakara/ping_ubuntu
+Error: No such image: adityaprabhakara/al-apacheDell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls | grep adityaprabhakara
+adityaprabhakara/code             1.1                 6dde432651d8        7 days ago
+    8.94MB
+adityaprabhakara/alpine_apache2   1.1                 807c9dc5adfe        7 days ago
+    8.94MB
+adityaprabhakara/ping_ubuntu      1.1                 7ad29b5918d6        2 weeks ago
+    122MB
+adityaprabhakara/al-apache        myown               41edb7c47c59        3 months ago
+    8.59MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image rm -f adityaprabhakara/code adityaprabhakara/alpine_apache2
+Error: No such image: adityaprabhakara/code
+Error: No such image: adityaprabhakara/alpine_apache2Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image prune
+WARNING! This will remove all dangling images.
+Are you sure you want to continue? [y/N] y
+Deleted Images:
+untagged: nginx@sha256:4a5573037f358b6cdfa2f3e8a9c33a5cf11bcd1675ca72ca76fbe5bd77d0d682
+deleted: sha256:8b89e48b5f157d9455c963b57c85d21e2337c58b8c983bc06f88476610adc129
+deleted: sha256:119ded3eca5e85ef43ee966e74564c604ccda064d955a8c5ed762e1d5e87f428
+deleted: sha256:6ece91c2763d826487e707f7b8ec063742ad0ee56cc9e605465cce95550c9a7f
+untagged: mysql@sha256:8f96d261d3ae48f2f62ec6510ccd45ae0eae2f2c9192cfcec35f4af5884cdfcf
+deleted: sha256:c356247174ed09823171ae537fd70273900103f2474c2eb62d8782ececcba7ab
+deleted: sha256:dd3d8bfccd85c8e4644089f53fb79fbb04f9f2b2dbe14bee74fd50d132c4cf63
+deleted: sha256:13c993c33357db1965366251c494a0c0299a566e7f6c28e51e6ae0b46708f140
+deleted: sha256:9576656f5a64224b7013c070986ada09ec70407c9b77cd0b5649bbce5af54a58
+deleted: sha256:fc397a10e55931931fbcc1a7f2c428196e6769f4d551444461556345c4357ed0
+deleted: sha256:0bffd0714a4d2a47cff844249cc9fda8255da56594de22481eeaf6613e62e761
+deleted: sha256:934ab2d454e45dd32bc52d92b99b2d2993e4d900ad3a72cb550b21fbe4fc51c4
+deleted: sha256:414bfbc2026e739c291bb7d5883fd91b311eda19f005b262f7b8f95d87703c6a
+deleted: sha256:05df764aa38d5cfc9a90f8bcd7b916ab0d2ffef6ffad91b9d4847268fedf5589
+deleted: sha256:24566b03af663da6f9323f0d44ca59c4e4b6cbf6912176f075ad9831422049b7
+deleted: sha256:e804f36c45fc790308cb7cfab583172118a9d0c956154ff948ca7619754926ed
+deleted: sha256:080e27e0ae2e5eca63a958d46d76c327c66260bec6be23a1fc87a8103c2e79f8
+deleted: sha256:c21bac3a81542f4af3de730a4c08c65c31fea66741e244a8346344699cd19a2e
+deleted: sha256:c769aee0534e641a1f2a71e35a64b96c8b0199083f7ce748316665798421fa49
+deleted: sha256:de950da114403ed84faae7c96fd2dc30efb9c23c0060b0a0ac688391d5e362d3
+deleted: sha256:23e643be722a35c39a192ac76a8a8e829e6983d9486bf222ec47ba96b145d87d
+untagged: nginx@sha256:56a9367b64eaef37894842a6f7a19a0ef8e7bd5de964aa844a70b3e2d758033c
+deleted: sha256:920e5c5c8bed5a53a33aa707a99e7cb467016ba8fedbe5881475f9c24b5fb14d
+deleted: sha256:487d88551ba7bfa2c7879700d92215cf48ddd4d1d76c7c6d8fe30dbd3168c226
+deleted: sha256:646e6fcae02b305103db5a71017e00abb5e04354d7d2be3ef5650e73e61afa60
+deleted: sha256:faabd4250aaab8dbcd79b15cfca681e039fffa2246022dbd9f9bbf53c8ef3c79
+untagged: nginx@sha256:62a095e5da5f977b9f830adaf64d604c614024bf239d21068e4ca826d0d629a4
+deleted: sha256:5699ececb21caf07b92cbda9daa1e965407e3793a72000ecbf6b8e8595a0824a
+deleted: sha256:c34974813e70c230445629bfb7d58dfff99440d9e11fd8aa4230a50c6cb101f3
+deleted: sha256:85dd24921f1b33cd733671fbe604c4630899a19ef3a1822041f4b298636b79ca
+deleted: sha256:9c46f426bcb704beffafc951290ee7fe05efddbc7406500e7d0a3785538b8735
+deleted: sha256:0312e1ade9325d76484bb68a908b9ea98754671cf1d9788275f0421d83316058
+deleted: sha256:f087a692cd2ea0b1223be3017965aa92a2021ee642fb59b8206dbdfedc3063b0
+
+Total reclaimed space: 483.2MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image ls | grep adityaprabhakara
+adityaprabhakara/code             1.1                 6dde432651d8        7 days ago
+    8.94MB
+adityaprabhakara/alpine_apache2   1.1                 807c9dc5adfe        7 days ago
+    8.94MB
+adityaprabhakara/ping_ubuntu      1.1                 7ad29b5918d6        2 weeks ago
+    122MB
+adityaprabhakara/al-apache        myown               41edb7c47c59        3 months ago
+    8.59MB
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ #docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username (adityaprabhakara):
+Password:
+Login Succeeded
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image push alpine_apache2
+The push refers to repository [docker.io/library/alpine_apache2]
+44c371c92ba4: Preparing
+9ebc6af85701: Preparing
+b9ad874e7281: Preparing
+73046094a9b8: Preparing
+denied: requested access to the resource is denied
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image tag alpine_apache2 adityaprabhakara/alpine_apache2
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ docker image push adityaprabhakara/alpine_apache2
+The push refers to repository [docker.io/adityaprabhakara/alpine_apache2]
+9d38709a3ee1: Pushed
+73046094a9b8: Pushed
+1.1: digest: sha256:4f18c5de5c6db928da5a7fd865ac572e1683c87e4b290fbd09a73e058cd55587 size: 739
+5e7c2e4fb6fb: Pushed
+9d38709a3ee1: Layer already exists
+73046094a9b8: Layer already exists
+latest: digest: sha256:e3db6e6c3a8a93645fb194eda23077725581963cfc6d7e590ffefb28504b1a6a size: 950
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ ls
+Dockerfile
+Dell lap@Dell /d/docker-workshop/aug6/alpine_apache2
+λ cd ..
+Dell lap@Dell /d/docker-workshop/aug6
+λ ls
+alpine_apache2/
+Dell lap@Dell /d/docker-workshop/aug6
+λ mkdir code
+Dell lap@Dell /d/docker-workshop/aug6
+λ cd code
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ ls
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9c46945bf2fd        alpine_apache2:1    "/bin/sh -c 'httpd -…"   44 minutes ago      Up 44 minutes       0.0.0.0:8084->80/tcp   web01
+5ed8b57c6870        8e809f85fb49        "httpd -D FOREGROUND"    About an hour ago   Up About an hour    0.0.0.0:8083->80/tcp   cranky_villani
+9a14dee81262        projcode            "nginx -g 'daemon of…"   2 hours ago         Up 2 hours          0.0.0.0:8082->80/tcp   infallible_hawking
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec  web01 ls /var/www
+ls: E:/downloads/cmder/vendor/git-for-windows/var/www: No such file or directory
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec  -it web01 sh
+/ # cd /var
+/var # ls
+cache  empty  lib    local  lock   log    opt    run    spool  tmp    www
+/var # cd www
+/var/www # ls
+localhost  logs       modules    run
+/var/www # cd localhost/
+/var/www/localhost # ls
+cgi-bin  htdocs
+/var/www/localhost # cd htdocs/
+/var/www/localhost/htdocs # ls
+index.html
+/var/www/localhost/htdocs # exit
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ cd ..
+Dell lap@Dell /d/docker-workshop/aug6
+λ tree
+bash: tree: command not found
+Dell lap@Dell /d/docker-workshop/aug6
+λ ls
+alpine_apache2/  code/
+Dell lap@Dell /d/docker-workshop/aug6
+λ cd code
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ ls
+Dockerfile  index.html
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker build -t adityaprabhakara/code:1 -t adityaprabhakara/code .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM adityaprabhakara/alpine_apache2
+ ---> eb69f2c9ac38
+Step 2/2 : COPY index.html /var/www/localhost/htdocs/
+ ---> cdfe9946d1cf
+Successfully built cdfe9946d1cf
+Successfully tagged adityaprabhakara/code:1
+Successfully tagged adityaprabhakara/code:latest
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker image push adityaprabhakara/code
+The push refers to repository [docker.io/adityaprabhakara/code]
+1eb0ec0af4b4: Pushed
+5e7c2e4fb6fb: Mounted from adityaprabhakara/alpine_apache2
+9d38709a3ee1: Mounted from adityaprabhakara/alpine_apache2
+73046094a9b8: Mounted from adityaprabhakara/alpine_apache2
+1: digest: sha256:16e46d8bfa7db1f6ae53ecc61283ee2fd54a215e4ed9073897ad2767e9dd9896 size: 1157
+88ca74f8a78f: Pushed
+9d38709a3ee1: Layer already exists
+73046094a9b8: Layer already exists
+1.1: digest: sha256:5eda44e40b9bbf31a503dce3684e1c17ce9dd0260d44d33d7410eb849f05b569 size: 946
+1eb0ec0af4b4: Layer already exists
+5e7c2e4fb6fb: Layer already exists
+9d38709a3ee1: Layer already exists
+73046094a9b8: Layer already exists
+latest: digest: sha256:16e46d8bfa7db1f6ae53ecc61283ee2fd54a215e4ed9073897ad2767e9dd9896 size: 1157
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker image history adityaprabhakara/code
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+cdfe9946d1cf        13 minutes ago      /bin/sh -c #(nop) COPY file:4e5983059023f2a8…   21B
+eb69f2c9ac38        39 minutes ago      /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "http…   0B
+
+ed17caca8a85        39 minutes ago      /bin/sh -c apk update                           1.27MB
+369fe644e9dc        7 days ago          /bin/sh -c apk update && apk add apache2 && …   4.53MB
+11cd0b38bc3c        4 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+
+<missing>           4 weeks ago         /bin/sh -c #(nop) ADD file:25f61d70254b9807a…   4.41MB
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ history
+  119             /"""""""""""""""""\___/ ===
+  120        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  121             \______ o           __/
+  122               \    \         __/
+  123                \____\_______/
+  124  EOF
+  125  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  126  echo "For help getting started, check out the docs at https://docs.docker.com"
+  127  echo
+  128  cd
+  129  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  130  export -f docker
+  131  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  132  export DOCKER_TLS_VERIFY="1"
+  133  export DOCKER_HOST="tcp://192.168.99.100:2376"
+  134  export DOCKER_CERT_PATH="C:\Users\Dell lap\.docker\machine\machines\default"
+  135  export DOCKER_MACHINE_NAME="default"
+  136  export COMPOSE_CONVERT_WINDOWS_PATHS="true"
+  137  eval $("C:\Program Files\Docker Toolbox\docker-machine.exe" env)
+  138  docker network create --subnet 203.0.113.0/24 --gateway 203.0.113.254 iptastic
+  139  docker run --rm -it --net iptastic --ip 203.0.113.2 nginx
+  140  docker container ls
+  141  docker container ls -a
+  142  docker run --rm -it -d --net iptastic --ip 203.0.113.2 nginx
+  143  docker container ls
+  144  docker exec -it laughing_darwin sh
+  145  docker container inspect laughing_darwin
+  146  history | tail
+  147  pwd
+  148  D:
+  149  cd /d/
+  150  cd docker-workshop/
+  151  docker contianer ls
+  152  docker container ls
+  153  docker container rm -f f3c0963fbb6c
+  154  docker container prune
+  155  clear
+  156  ls
+  157  docker-compose up
+  158  exit
+  159  which conda
+  160  cd D:
+  161  cd sw/
+  162  cd A
+  163  cd Anaconda2/
+  164  cd S
+  165  cd Scripts/
+  166  mkdir ai
+  167  cd ai
+  168  git clone github.com/AdityaSP/ai-ml-dl
+  169  git clone https://github.com/AdityaSP/ai-ml-dl
+  170  cd ai-ml-dl/
+  171  ls
+  172  git mv rnn reinforcementlearning
+  173  git add *
+  174  git commit -a -m "Change name"
+  175  git push
+  176  exit
+  177  #!/bin/bash
+  178  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  179  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  180  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  181  # Docker for Windows when launching using the Quickstart.
+  182  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  183  VM=${DOCKER_MACHINE_NAME-default}
+  184  DOCKER_MACHINE=./docker-machine.exe
+  185  STEP="Looking for vboxmanage.exe"
+  186  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  187  BLUE='\033[1;34m'
+  188  GREEN='\033[0;32m'
+  189  NC='\033[0m'
+  190  #clear all_proxy if not socks address
+  191  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  192  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  193  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  194  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  195  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  196  VM_EXISTS_CODE=$?
+  197  set -e
+  198  STEP="Checking if machine $VM exists"
+  199  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  200  STEP="Checking status on $VM"
+  201  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  202  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  203  STEP="Setting env"
+  204  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  205  STEP="Finalize"
+  206  clear
+  207  cat << EOF
+  208                          ##         .
+  209                    ## ## ##        ==
+  210                 ## ## ## ## ##    ===
+  211             /"""""""""""""""""\___/ ===
+  212        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  213             \______ o           __/
+  214               \    \         __/
+  215                \____\_______/
+  216  EOF
+  217  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  218  echo "For help getting started, check out the docs at https://docs.docker.com"
+  219  echo
+  220  cd
+  221  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  222  export -f docker
+  223  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  224  #!/bin/bash
+  225  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  226  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  227  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  228  # Docker for Windows when launching using the Quickstart.
+  229  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  230  VM=${DOCKER_MACHINE_NAME-default}
+  231  DOCKER_MACHINE=./docker-machine.exe
+  232  STEP="Looking for vboxmanage.exe"
+  233  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  234  BLUE='\033[1;34m'
+  235  GREEN='\033[0;32m'
+  236  NC='\033[0m'
+  237  #clear all_proxy if not socks address
+  238  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  239  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  240  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  241  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  242  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  243  VM_EXISTS_CODE=$?
+  244  set -e
+  245  STEP="Checking if machine $VM exists"
+  246  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  247  STEP="Checking status on $VM"
+  248  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  249  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  250  STEP="Setting env"
+  251  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  252  STEP="Finalize"
+  253  clear
+  254  cat << EOF
+  255                          ##         .
+  256                    ## ## ##        ==
+  257                 ## ## ## ## ##    ===
+  258             /"""""""""""""""""\___/ ===
+  259        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  260             \______ o           __/
+  261               \    \         __/
+  262                \____\_______/
+  263  EOF
+  264  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  265  echo "For help getting started, check out the docs at https://docs.docker.com"
+  266  echo
+  267  cd
+  268  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  269  export -f docker
+  270  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  271  #!/bin/bash
+  272  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  273  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  274  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  275  # Docker for Windows when launching using the Quickstart.
+  276  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  277  VM=${DOCKER_MACHINE_NAME-default}
+  278  DOCKER_MACHINE=./docker-machine.exe
+  279  STEP="Looking for vboxmanage.exe"
+  280  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  281  BLUE='\033[1;34m'
+  282  GREEN='\033[0;32m'
+  283  NC='\033[0m'
+  284  #clear all_proxy if not socks address
+  285  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  286  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  287  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  288  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  289  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  290  VM_EXISTS_CODE=$?
+  291  set -e
+  292  STEP="Checking if machine $VM exists"
+  293  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  294  STEP="Checking status on $VM"
+  295  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  296  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  297  STEP="Setting env"
+  298  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  299  STEP="Finalize"
+  300  clear
+  301  cat << EOF
+  302                          ##         .
+  303                    ## ## ##        ==
+  304                 ## ## ## ## ##    ===
+  305             /"""""""""""""""""\___/ ===
+  306        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  307             \______ o           __/
+  308               \    \         __/
+  309                \____\_______/
+  310  EOF
+  311  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  312  echo "For help getting started, check out the docs at https://docs.docker.com"
+  313  echo
+  314  cd
+  315  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  316  export -f docker
+  317  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  318  docker-machine env
+  319  dockerdock
+  320  docker-machine stop
+  321  docker-machine start
+  322  docker-machine env
+  323  docker container run -d -p 5000:5000 --name myreg registry
+  324  docker pull hello-world
+  325  docker tag hello-world 127.0.0.1:5000/myhw
+  326  docker image ls myhw
+  327  docker push 127.0.0.1:5000/myhw
+  328  docker image remove hello-world
+  329  docker image remove 127.0.0.1/hello-world
+  330  docker image remove 127.0.0.1:5000/hello-world
+  331  docker image remove 127.0.0.1:5000/myhw
+  332  docker pull 127.0.0.1:5000/myhw
+  333  docker-machine stop
+  334  docker-machine start
+  335  docker-machine env
+  336  docker image ls
+  337  docker image tag code adityaprabhakara/code
+  338  docker image push adityaprabhakara/code
+  339  history
+  340  docker image pull registry
+  341  docker container run -d -p 5001:5000 --name personal registry
+  342  docker image tag code 127.0.0.1:5001/code
+  343  #docker image pull registry
+  344  #docker container run -d -p 5001:5000 --name personal registry
+  345  docker image push 127.0.0.1:5001/code
+  346  docker image rm 127.0.0.1:5001/code
+  347  docker image pull 127.0.0.1:5001/code
+  348  docker image ls
+  349  docker image pull 127.0.0.1:5001/code
+  350  #docker container run -d -p 5001:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  351  docker container run -d -p 5002:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  352  docker image tag code 127.0.0.1:5002/code
+  353  docker image push 127.0.0.1:5002/code
+  354  cd /tmp/myimages
+  355  #docker container run -d -p 5002:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  356  docker rm personal2
+  357  docker rm -f personal2
+  358  docker container run -d -p 5002:5000 -v //tmp/myimages:/var/lib/registry --name personal2 registry
+  359  docker image push 127.0.0.1:5002/code
+  360  cd /tmp/
+  361  ls
+  362  cd myimages
+  363  docker-machine stop
+  364  exit
+  365  #!/bin/bash
+  366  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  367  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  368  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  369  # Docker for Windows when launching using the Quickstart.
+  370  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  371  VM=${DOCKER_MACHINE_NAME-default}
+  372  DOCKER_MACHINE=./docker-machine.exe
+  373  STEP="Looking for vboxmanage.exe"
+  374  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  375  BLUE='\033[1;34m'
+  376  GREEN='\033[0;32m'
+  377  NC='\033[0m'
+  378  #clear all_proxy if not socks address
+  379  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  380  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  381  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  382  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  383  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  384  VM_EXISTS_CODE=$?
+  385  set -e
+  386  STEP="Checking if machine $VM exists"
+  387  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  388  STEP="Checking status on $VM"
+  389  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  390  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  391  STEP="Setting env"
+  392  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  393  STEP="Finalize"
+  394  clear
+  395  cat << EOF
+  396                          ##         .
+  397                    ## ## ##        ==
+  398                 ## ## ## ## ##    ===
+  399             /"""""""""""""""""\___/ ===
+  400        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  401             \______ o           __/
+  402               \    \         __/
+  403                \____\_______/
+  404  EOF
+  405  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  406  echo "For help getting started, check out the docs at https://docs.docker.com"
+  407  echo
+  408  cd
+  409  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  410  export -f docker
+  411  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  412  docker-machine env
+  413  docker container ls
+  414  docker container ls
+  415  docker swarm leave
+  416  docker swarm leave --force
+  417  docker container rm 4095
+  418  docker container ls
+  419  docker container ls
+  420  docker container ls
+  421  docker container inspect web01 | grep -i ipaddress
+  422  docker-machine stop
+  423  exit
+  424  #!/bin/bash
+  425  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  426  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  427  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  428  # Docker for Windows when launching using the Quickstart.
+  429  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  430  VM=${DOCKER_MACHINE_NAME-default}
+  431  DOCKER_MACHINE=./docker-machine.exe
+  432  STEP="Looking for vboxmanage.exe"
+  433  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  434  BLUE='\033[1;34m'
+  435  GREEN='\033[0;32m'
+  436  NC='\033[0m'
+  437  #clear all_proxy if not socks address
+  438  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  439  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  440  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  441  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  442  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  443  VM_EXISTS_CODE=$?
+  444  set -e
+  445  STEP="Checking if machine $VM exists"
+  446  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  447  STEP="Checking status on $VM"
+  448  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  449  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  450  STEP="Setting env"
+  451  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  452  STEP="Finalize"
+  453  clear
+  454  cat << EOF
+  455                          ##         .
+  456                    ## ## ##        ==
+  457                 ## ## ## ## ##    ===
+  458             /"""""""""""""""""\___/ ===
+  459        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  460             \______ o           __/
+  461               \    \         __/
+  462                \____\_______/
+  463  EOF
+  464  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  465  echo "For help getting started, check out the docs at https://docs.docker.com"
+  466  echo
+  467  cd
+  468  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  469  export -f docker
+  470  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  471  export DOCKER_TLS_VERIFY="1"
+  472  export DOCKER_HOST="tcp://192.168.99.100:2376"
+  473  export DOCKER_CERT_PATH="C:\Users\Dell lap\.docker\machine\machines\default"
+  474  export DOCKER_MACHINE_NAME="default"
+  475  export COMPOSE_CONVERT_WINDOWS_PATHS="true"
+  476  # Run this command to configure your shell:
+  477  # eval $("C:\Program Files\Docker Toolbox\docker-machine.exe" env)
+  478  eval $("C:\Program Files\Docker Toolbox\docker-machine.exe" env)
+  479  cd
+  480  D:
+  481  cd /d
+  482  ls
+  483  cd docker-workshop/aug6/
+  484  docker container ls
+  485  docker
+  486  docker container run nginx
+  487  docker container ls
+  488  docker container run nginx
+  489  docker container ls
+  490  docker container stop 8b101ae2a781 7ac
+  491  docker container ls
+  492  docker container ls -a
+  493  docker container start thirsty_curran 8b101
+  494  docker container ls
+  495  docker container rm 8b101ae2a781 7ac901ab63d4
+  496  docker container rm -f 8b101ae2a781 7ac901ab63d4
+  497  docker container ls -a
+  498  docker container prune
+  499  docker container run -d --name web01 nginx
+  500  docker container ls
+  501  docker ps
+  502  docker container inspect web01
+  503  docker container run rm -fweb01
+  504  docker container run rm -f web01
+  505  docker container rm -f web01
+  506  docker container run -d --name web01 -p 8081:80 nginx
+  507  docker container run -d --name web02 -p 8082:80 nginx
+  508  docker container inspect web01
+  509  docker container ls
+  510  docker container exec -it web02 sh
+  511  docker container exec -it web02 bash
+  512  #docker container run alpine
+  513  docker container prune
+  514  docker container ls
+  515  docker container run alpine
+  516  docker container ls
+  517  docker container ls -a
+  518  docker container run alpine ping google.com
+  519  docker container ls
+  520  docker container logs 84f463c24408
+  521  docker container ls -a
+  522  docker container logs 84f463c24408
+  523  docker container ls -a
+  524  docker container stop affectionate_borg
+  525  docker container prune
+  526  docker container ls
+  527  docker image ls
+  528  docker image pull nginx
+  529  docker image pull nginx
+  530  docker image ls | grep nginx | grep latest
+  531  docker image pull nginx:alpine
+  532  docker image ls | grep nginx | grep alpine
+  533  docker image ls | grep nginx | grep latest
+  534  docker inspect c82521676580
+  535  docker image history nginx
+  536  docker container ls
+  537  docker container rm -f b41dc605e65f 0ffacc643c72
+  538  docker container prune
+  539  docker container run -p 8081:80 -d nginx
+  540  docker container ls
+  541  docker container exec -it c4eb56c528e0 bash
+  542  docker container ls
+  543  docker container stop elated_poincare
+  544  docker commit --help
+  545  docker commit elated_poincare projcode
+  546  docker image ls | grep projcode
+  547  docker image history projcode
+  548  docker image tag projcode p2code
+  549  docker image rm p2code
+  550  docker image history nginx
+  551  docker container run -p 8082:80 -d projcode
+  552  docker-machine ls
+  553  docker image ls | grep projcode
+  554  docker container run -it alpine bash
+  555  docker container run -it alpine sh
+  556  docker container ls
+  557  docker container ls -a
+  558  docker commit feb209b8ea2a alpine_apache2
+  559  docker image history alpine_apache2
+  560  docker container run -d -p 8083:80 alpine_apache2 httpd -D FOREGROUND
+  561  docker container ls
+  562  docker container ls -a
+  563  docker container prune
+  564  docker container ls -a
+  565  mkdir alpine_apache2
+  566  cd alpine_apache2/
+  567  ls
+  568  ls
+  569  ls
+  570  docker image history nginx
+  571  ls
+  572  docker build -t alpine_apache2:1 .
+  573  docker image tag alpine_apache2:1 alpine_apache2:latest
+  574  docker container run -d -p 8084:80 --name web01 alpine_apache2:1
+  575  docker container ls
+  576  docker container ls -a
+  577  docker container logs 9c46945bf2fd
+  578  docker container exec -it 9c46945bf2fd sh
+  579  docker image history alpine_apache2
+  580  docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+  581  docker image ls | grep alpine_apache2
+  582  docker image history alpine_apache2
+  583  docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+  584  docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+  585  docker image rm -f 369fe644e9dc
+  586  docker image ls | grep adityaprabhakara
+  587  docker image -q -p
+  588  docker image ls -q -p
+  589  docker image ls -q
+  590  docker image ls | grep adityaprabhakara | cut -f 1 -d " "
+  591  docker image rm -f $(docker image ls | grep adityaprabhakara | cut -f 1 -d " ")
+  592  docker image ls | grep adityaprabhakara
+  593  docker image rm -f adityaprabhakara/code adityaprabhakara/alpine_apache2
+  594  docker image prune
+  595  docker image ls | grep adityaprabhakara
+  596  #docker build -t alpine_apache2:2 -t alpine_apache2:latest .
+  597  docker login
+  598  docker image push alpine_apache2
+  599  docker image tag alpine_apache2 adityaprabhakara/alpine_apache2
+  600  docker image push adityaprabhakara/alpine_apache2
+  601  ls
+  602  cd ..
+  603  ls
+  604  mkdir code
+  605  cd code
+  606  ls
+  607  docker container ls
+  608  docker exec  web01 ls /var/www
+  609  docker exec  -it web01 sh
+  610  cd ..
+  611  tree
+  612  ls
+  613  cd code
+  614  ls
+  615  docker build -t adityaprabhakara/code:1 -t adityaprabhakara/code .
+  616  docker image push adityaprabhakara/code
+  617  docker image history adityaprabhakara/code
+  618  history
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9c46945bf2fd        alpine_apache2:1    "/bin/sh -c 'httpd -…"   About an hour ago   Up About an hour    0.0.0.0:8084->80/tcp   web01
+5ed8b57c6870        8e809f85fb49        "httpd -D FOREGROUND"    2 hours ago         Up 2 hours          0.0.0.0:8083->80/tcp   cranky_villani
+9a14dee81262        projcode            "nginx -g 'daemon of…"   3 hours ago         Up 3 hours          0.0.0.0:8082->80/tcp   infallible_hawking
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Total reclaimed space: 0B
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9c46945bf2fd        alpine_apache2:1    "/bin/sh -c 'httpd -…"   About an hour ago   Up About an hour    0.0.0.0:8084->80/tcp   web01
+5ed8b57c6870        8e809f85fb49        "httpd -D FOREGROUND"    2 hours ago         Up 2 hours          0.0.0.0:8083->80/tcp   cranky_villani
+9a14dee81262        projcode            "nginx -g 'daemon of…"   3 hours ago         Up 3 hours          0.0.0.0:8082->80/tcp   infallible_hawking
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container rm -f $(docker container -q -p)
+unknown shorthand flag: 'q' in -q
+See 'docker container --help'.
+
+Usage:  docker container COMMAND
+
+Manage containers
+
+Options:
+
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  inspect     Display detailed information on one or more containers
+  kill        Kill one or more running containers
+  logs        Fetch the logs of a container
+  ls          List containers
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  prune       Remove all stopped containers
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  run         Run a command in a new container
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  wait        Block until one or more containers stop, then print their exit codes
+
+Run 'docker container COMMAND --help' for more information on a command.
+
+"docker container rm" requires at least 1 argument.
+See 'docker container rm --help'.
+
+Usage:  docker container rm [OPTIONS] CONTAINER [CONTAINER...] [flags]
+
+Remove one or more containers
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container -
+
+Usage:  docker container COMMAND
+
+Manage containers
+
+Options:
+
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  inspect     Display detailed information on one or more containers
+  kill        Kill one or more running containers
+  logs        Fetch the logs of a container
+  ls          List containers
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  prune       Remove all stopped containers
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  run         Run a command in a new container
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  wait        Block until one or more containers stop, then print their exit codes
+
+Run 'docker container COMMAND --help' for more information on a command.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container -q
+unknown shorthand flag: 'q' in -q
+See 'docker container --help'.
+
+Usage:  docker container COMMAND
+
+Manage containers
+
+Options:
+
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  inspect     Display detailed information on one or more containers
+  kill        Kill one or more running containers
+  logs        Fetch the logs of a container
+  ls          List containers
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  prune       Remove all stopped containers
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  run         Run a command in a new container
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  wait        Block until one or more containers stop, then print their exit codes
+
+Run 'docker container COMMAND --help' for more information on a command.
+
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container rm -f $(docker container ls -q -p)
+unknown shorthand flag: 'p' in -p
+See 'docker container ls --help'.
+"docker container rm" requires at least 1 argument.
+See 'docker container rm --help'.
+
+Usage:  docker container rm [OPTIONS] CONTAINER [CONTAINER...] [flags]
+
+Remove one or more containers
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls -q
+9c46945bf2fd
+5ed8b57c6870
+9a14dee81262
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container rm -f $(docker container ls -q)
+9c46945bf2fd
+5ed8b57c6870
+9a14dee81262
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS
+          PORTS               NAMES
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run --name web01 nginx:alpine
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web02 nginx:alpine
+4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+4df0ef4e5c2d        nginx:alpine        "nginx -g 'daemon of…"   6 seconds ago       Up 2 seconds        80/tcp              web02
+5743cef453de        nginx:alpine        "nginx -g 'daemon of…"   20 seconds ago      Up 17 seconds       80/tcp              web01
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network prune
+WARNING! This will remove all networks not used by at least one container.
+Are you sure you want to continue? [y/N] y
+Deleted Networks:
+web01_web02
+web02_web03
+
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+4df0ef4e5c2d        nginx:alpine        "nginx -g 'daemon of…"   31 seconds ago      Up 28 seconds       80/tcp              web02
+5743cef453de        nginx:alpine        "nginx -g 'daemon of…"   45 seconds ago      Up 42 seconds       80/tcp              web01
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web01
+[
+    {
+        "Id": "5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014",
+        "Created": "2018-08-06T10:33:19.136859891Z",
+        "Path": "nginx",
+        "Args": [
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 13942,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2018-08-06T10:33:19.778951506Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:36f3464a21975e5779d081a9e8a78a024c549d1895fc9981d6bd8b67075ebd7b",
+        "ResolvConfPath": "/mnt/sda1/var/lib/docker/containers/5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014/resolv.conf",
+        "HostnamePath": "/mnt/sda1/var/lib/docker/containers/5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014/hostname",
+        "HostsPath": "/mnt/sda1/var/lib/docker/containers/5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014/hosts",
+        "LogPath": "/mnt/sda1/var/lib/docker/containers/5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014/5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014-json.log",
+        "Name": "/web01",
+        "RestartCount": 0,
+        "Driver": "aufs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "shareable",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                20,
+                90
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0
+        },
+        "GraphDriver": {
+            "Data": null,
+            "Name": "aufs"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "5743cef453de",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.15.2"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "nginx:alpine",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGTERM"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "6b1549630f25e629d701f68a39a2226589326a596da12e5f2a372eba282f4061",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "80/tcp": null
+            },
+            "SandboxKey": "/var/run/docker/netns/6b1549630f25",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "db7653e9c5b3f14b4af8534725fc7c5cbfa0d4157b4df02a2632254da4629da4",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "93124f9a3b90191a2b4d7daee314084e42929f8ed02664770f00e1df0e422f28",
+                    "EndpointID": "db7653e9c5b3f14b4af8534725fc7c5cbfa0d4157b4df02a2632254da4629da4",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web02
+[
+    {
+        "Id": "4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe",
+        "Created": "2018-08-06T10:33:33.283369159Z",
+        "Path": "nginx",
+        "Args": [
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 13993,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2018-08-06T10:33:33.982423123Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:36f3464a21975e5779d081a9e8a78a024c549d1895fc9981d6bd8b67075ebd7b",
+        "ResolvConfPath": "/mnt/sda1/var/lib/docker/containers/4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe/resolv.conf",
+        "HostnamePath": "/mnt/sda1/var/lib/docker/containers/4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe/hostname",
+        "HostsPath": "/mnt/sda1/var/lib/docker/containers/4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe/hosts",
+        "LogPath": "/mnt/sda1/var/lib/docker/containers/4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe/4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe-json.log",
+        "Name": "/web02",
+        "RestartCount": 0,
+        "Driver": "aufs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "shareable",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                20,
+                90
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0
+        },
+        "GraphDriver": {
+            "Data": null,
+            "Name": "aufs"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "4df0ef4e5c2d",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.15.2"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "nginx:alpine",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGTERM"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "1039eb5bb6240507fc5971e034a48c770bb25bc642a40a69f20c9e236e2dc37a",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "80/tcp": null
+            },
+            "SandboxKey": "/var/run/docker/netns/1039eb5bb624",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "6307e0e6fb6176c6724dd33f0a3682b84d58fb8b6213d10b9d500b6206a9cf59",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.3",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:03",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "93124f9a3b90191a2b4d7daee314084e42929f8ed02664770f00e1df0e422f28",
+                    "EndpointID": "6307e0e6fb6176c6724dd33f0a3682b84d58fb8b6213d10b9d500b6206a9cf59",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.3",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:03",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping 172.17.0.3
+PING 172.17.0.3 (172.17.0.3): 56 data bytes
+64 bytes from 172.17.0.3: seq=0 ttl=64 time=0.164 ms
+64 bytes from 172.17.0.3: seq=1 ttl=64 time=0.147 ms
+64 bytes from 172.17.0.3: seq=2 ttl=64 time=0.214 ms
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web03 nginx:alpine
+cb31941f5e95ba3cc32b5745c30dddef250e1ed3f6b07a6382337249075f4436
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+93124f9a3b90        bridge              bridge              local
+72665c607220        host                host                local
+3f452ad07678        none                null                local
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+        "Id": "93124f9a3b90191a2b4d7daee314084e42929f8ed02664770f00e1df0e422f28",
+        "Created": "2018-08-06T04:13:00.270649657Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "4df0ef4e5c2d9b75c7fd8b5c24880e8d64d5b5299e196ffc54ebd348c2dfcffe": {
+                "Name": "web02",
+                "EndpointID": "6307e0e6fb6176c6724dd33f0a3682b84d58fb8b6213d10b9d500b6206a9cf59",
+                "MacAddress": "02:42:ac:11:00:03",
+                "IPv4Address": "172.17.0.3/16",
+                "IPv6Address": ""
+            },
+            "5743cef453dec58bb498372d812cb78c7b124ae2ebad6626fea9b356ff9b7014": {
+                "Name": "web01",
+                "EndpointID": "db7653e9c5b3f14b4af8534725fc7c5cbfa0d4157b4df02a2632254da4629da4",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            },
+            "cb31941f5e95ba3cc32b5745c30dddef250e1ed3f6b07a6382337249075f4436": {
+                "Name": "web03",
+                "EndpointID": "4ade38158c785e26dcacf23e60af3cdb2d9cac29057d0386deb850f730f154bf",
+                "MacAddress": "02:42:ac:11:00:04",
+                "IPv4Address": "172.17.0.4/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network create web01_web02
+e185405e15178121e2c641e8418cdcd974ee1f4d25e7c3bcaa62d87b85da7837
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+93124f9a3b90        bridge              bridge              local
+72665c607220        host                host                local
+3f452ad07678        none                null                local
+e185405e1517        web01_web02         bridge              local
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker inspect network web01_web02
+[
+    {
+        "Name": "web01_web02",
+        "Id": "e185405e15178121e2c641e8418cdcd974ee1f4d25e7c3bcaa62d87b85da7837",
+        "Created": "2018-08-06T10:43:27.08640856Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+Error: No such object: network
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network attach --help
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Options:
+
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+
+Run 'docker network COMMAND --help' for more information on a command.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network connect --help
+
+Usage:  docker network connect [OPTIONS] NETWORK CONTAINER
+
+Connect a container to a network
+
+Options:
+      --alias strings           Add network-scoped alias for the container
+      --ip string               IPv4 address (e.g., 172.30.100.104)
+      --ip6 string              IPv6 address (e.g., 2001:db8::33)
+      --link list               Add link to another container
+      --link-local-ip strings   Add a link-local address for the container
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network connect web01_web02 web01
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web01 | grep -i ipaddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.18.0.2",
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network disconnect bridge web01
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web01 | grep -i ipaddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.18.0.2",
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ history | tail -n 15
+  635  docker container inspect web02
+  636  docker exec web01 ping 172.17.0.3
+  637  docker container run -d --name web03 nginx:alpine
+  638  docker network ls
+  639  docker network inspect bridge
+  640  docker network create web01_web02
+  641  docker network ls
+  642  docker inspect network web01_web02
+  643  docker network attach --help
+  644  docker network connect --help
+  645  docker network connect web01_web02 web01
+  646  docker container inspect web01 | grep -i ipaddress
+  647  docker network disconnect bridge web01
+  648  docker container inspect web01 | grep -i ipaddress
+  649  history | tail -n 15
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ history | tail -n 30
+  621  docker container ls
+  622  docker container rm -f $(docker container -q -p)
+  623  docker container -
+  624*
+  625  docker container rm -f $(docker container ls -q -p)
+  626  docker container ls -q
+  627  docker container rm -f $(docker container ls -q)
+  628  docker container ls
+  629  docker container run --name web01 nginx:alpine
+  630  docker container run -d --name web02 nginx:alpine
+  631  docker container ls
+  632  docker network prune
+  633  docker container ls
+  634  docker container inspect web01
+  635  docker container inspect web02
+  636  docker exec web01 ping 172.17.0.3
+  637  docker container run -d --name web03 nginx:alpine
+  638  docker network ls
+  639  docker network inspect bridge
+  640  docker network create web01_web02
+  641  docker network ls
+  642  docker inspect network web01_web02
+  643  docker network attach --help
+  644  docker network connect --help
+  645  docker network connect web01_web02 web01
+  646  docker container inspect web01 | grep -i ipaddress
+  647  docker network disconnect bridge web01
+  648  docker container inspect web01 | grep -i ipaddress
+  649  history | tail -n 15
+  650  history | tail -n 30
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping 172.17.0.3
+PING 172.17.0.3 (172.17.0.3): 56 data bytes
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network connect web01_web02 web02
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network disconnect bridge web02
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web02 | grep -i ipaddress
+            "SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.18.0.3",
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping 172.18.0.3
+PING 172.18.0.3 (172.18.0.3): 56 data bytes
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.187 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.246 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.266 ms
+64 bytes from 172.18.0.3: seq=3 ttl=64 time=0.241 ms
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping web02
+PING web02 (172.18.0.3): 56 data bytes
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.207 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.278 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.125 ms
+64 bytes from 172.18.0.3: seq=3 ttl=64 time=0.309 ms
+64 bytes from 172.18.0.3: seq=4 ttl=64 time=0.300 ms
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network create web02_web03
+ad1059eb049c09419dae056ce2e1d8483e69ecb8acce5bb8ace865544554052c
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network attach web02_web03 web03
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Options:
+
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+
+Run 'docker network COMMAND --help' for more information on a command.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network connect web02_web03 web03
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network connect web02_web03 web02
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network disconnect bridge web03
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping web02
+PING web02 (172.18.0.3): 56 data bytes
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.207 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.158 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.187 ms
+64 bytes from 172.18.0.3: seq=3 ttl=64 time=0.199 ms
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web02 ping web03
+PING web03 (172.19.0.2): 56 data bytes
+64 bytes from 172.19.0.2: seq=0 ttl=64 time=0.108 ms
+64 bytes from 172.19.0.2: seq=1 ttl=64 time=0.230 ms
+64 bytes from 172.19.0.2: seq=2 ttl=64 time=0.210 ms
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker exec web01 ping web03
+ping: bad address 'web03'
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network create
+"docker network create" requires exactly 1 argument.
+See 'docker network create --help'.
+
+Usage:  docker network create [OPTIONS] NETWORK [flags]
+
+Create a network
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network create --help
+
+Usage:  docker network create [OPTIONS] NETWORK
+
+Create a network
+
+Options:
+      --attachable           Enable manual container attachment
+      --aux-address map      Auxiliary IPv4 or IPv6 addresses used by
+                             Network driver (default map[])
+      --config-from string   The network from which copying the configuration
+      --config-only          Create a configuration only network
+  -d, --driver string        Driver to manage the Network (default "bridge")
+      --gateway strings      IPv4 or IPv6 Gateway for the master subnet
+      --ingress              Create swarm routing-mesh network
+      --internal             Restrict external access to the network
+      --ip-range strings     Allocate container ip from a sub-range
+      --ipam-driver string   IP Address Management Driver (default "default")
+      --ipam-opt map         Set IPAM driver specific options (default map[])
+      --ipv6                 Enable IPv6 networking
+      --label list           Set metadata on a network
+  -o, --opt map              Set driver specific options (default map[])
+      --scope string         Control the network's scope
+      --subnet strings       Subnet in CIDR format that represents a
+                             network segment
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name --network web02_web03 --ipaddress 172.19.0.20 web04 ngin x:alpine
+Unable to find image 'web02_web03:latest' locally
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web04 --network web02_web03 --ipaddress 172.19.0.20 ngin x:alpine
+unknown flag: --ipaddress
+See 'docker container run --help'.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run --help | grep -i address
+      --ip string                      IPv4 address (e.g., 172.30.100.104)
+      --ip6 string                     IPv6 address (e.g., 2001:db8::33)
+                                       addresses
+      --mac-address string             Container MAC address (e.g.,
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web04 --network web02_web03 --ip 172.19.0.20 nginx:alpin e
+ffd73db1eed9234f04ee03209f3b05aee68ecb2c5f32db7983f2b0741a159b36
+C:\Program Files\Docker Toolbox\docker.exe: Error response from daemon: user specified IP address is supported only when connecting to networks with user configured subnets.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker network create my_static_nw --subnet 172.30.0.0/16 --gateway 172.30.0.1
+be7f10092cf7c35cb94e7a6d4c81604765ea6bc85be19887a8223603ba16387f
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker inspect my_static_nw
+[
+    {
+        "Name": "my_static_nw",
+        "Id": "be7f10092cf7c35cb94e7a6d4c81604765ea6bc85be19887a8223603ba16387f",
+        "Created": "2018-08-06T11:14:59.77664536Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.30.0.0/16",
+                    "Gateway": "172.30.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web04 --network my_static_nw --ip 172.30.0.20 nginx:alpi ne
+C:\Program Files\Docker Toolbox\docker.exe: Error response from daemon: Conflict. The container name "/web04" is already in use by container "ffd73db1eed9234f04ee03209f3b05aee68ecb2c5f32db7983f2b0741a159b36". You have to remove (or rename) that container to be able to reuse that name.
+See 'C:\Program Files\Docker Toolbox\docker.exe run --help'.
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container rm -f "web04"
+web04
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container run -d --name web04 --network my_static_nw --ip 172.30.0.20 nginx:alpi ne
+e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ docker container inspect web04
+[
+    {
+        "Id": "e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81",
+        "Created": "2018-08-06T11:16:13.546631395Z",
+        "Path": "nginx",
+        "Args": [
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 15474,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2018-08-06T11:16:14.148201275Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:36f3464a21975e5779d081a9e8a78a024c549d1895fc9981d6bd8b67075ebd7b",
+        "ResolvConfPath": "/mnt/sda1/var/lib/docker/containers/e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81/resolv.conf",
+        "HostnamePath": "/mnt/sda1/var/lib/docker/containers/e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81/hostname",
+        "HostsPath": "/mnt/sda1/var/lib/docker/containers/e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81/hosts",
+        "LogPath": "/mnt/sda1/var/lib/docker/containers/e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81/e1c95cc28b0ce2e2247636947247f4656013a7b594d27531ea6757ae8c4fba81-json.log",
+        "Name": "/web04",
+        "RestartCount": 0,
+        "Driver": "aufs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "my_static_nw",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "shareable",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                20,
+                90
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0
+        },
+        "GraphDriver": {
+            "Data": null,
+            "Name": "aufs"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "e1c95cc28b0c",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.15.2"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "nginx:alpine",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGTERM"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "9d277a3cdb241db81afd69a5b7c85357f91d57ece31b7da624381be1ae914861",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "80/tcp": null
+            },
+            "SandboxKey": "/var/run/docker/netns/9d277a3cdb24",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "my_static_nw": {
+                    "IPAMConfig": {
+                        "IPv4Address": "172.30.0.20"
+                    },
+                    "Links": null,
+                    "Aliases": [
+                        "e1c95cc28b0c"
+                    ],
+                    "NetworkID": "be7f10092cf7c35cb94e7a6d4c81604765ea6bc85be19887a8223603ba16387f",
+                    "EndpointID": "49d7f9ec9b7d499c900475e06bb95e2c3affd60045f5e310395daad5938f3025",
+                    "Gateway": "172.30.0.1",
+                    "IPAddress": "172.30.0.20",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:1e:00:14",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ #docker network create my_static_nw --subnet 172.30.0.0/16 --gateway 172.30.0.1
+Dell lap@Dell /d/docker-workshop/aug6/code
+λ
