@@ -1,0 +1,21 @@
+ Docker installed. 
+
+ 
+
+Docker for Win 10 Pro
+
+   create a docker hub login using global id
+
+   Login
+
+   https://store.docker.com/editions/community/docker-ce-desktop-windows
+
+   Click on "Get Docker" and follow on screen instructions
+
+ 
+
+ 
+
+Docker for other Windows:
+
+    Follow instruction @ https://docs.docker.com/toolbox/overview/
