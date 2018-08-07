@@ -1,0 +1,30 @@
+version: '2.1'
+services:
+  mydb:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 'example'
+    volumes:
+      - mysql_db:/var/lib/mysql
+    healthcheck:
+      test: "mysql -uroot -pexample --execute \"show databases;\""
+      retries: 3
+      interval: 10s  
+    
+  ghost:
+    image: ghost:alpine
+    ports:
+      - 8080:2368
+    environment:
+      database__client: mysql
+      database__connection__host: mydb
+      database__connection__user: root
+      database__connection__password: example
+      database__connection__database: ghost    
+    depends_on:
+        mydb:
+            condition: service_healthy
+volumes:
+   mysql_db:
+   
+   
