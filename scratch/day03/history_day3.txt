@@ -1,0 +1,500 @@
+  206  cat << EOF
+  207                          ##         .
+  208                    ## ## ##        ==
+  209                 ## ## ## ## ##    ===
+  210             /"""""""""""""""""\___/ ===
+  211        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  212             \______ o           __/
+  213               \    \         __/
+  214                \____\_______/
+  215  EOF
+  216  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  217  echo "For help getting started, check out the docs at https://docs.docker.com"
+  218  echo
+  219  cd
+  220  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  221  export -f docker
+  222  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  223  cd /d/docker-workshop/aug6/
+  224  ls
+  225  docker container ls
+  226  eval $("C:\Program Files\Docker Toolbox\docker-machine.exe" env)
+  227  docker container ls
+  228  docker container run -d mysql
+  229  docker container
+  230  docker container ls -a
+  231  docker container logs ec2eb980bbdb
+  232  #docker container run -d --name mysql
+  233  docker container run --help
+  234  docker container run -d --name myds -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  235  docker container ls -a
+  236  docker container logs 5174720c954ba0cd70da496ae95a59f72a5cf4a96f3eac23c07f010cc8d1060a
+  237  history | tail -n15
+  238  docker container ls
+  239  docker container exec -it myds bash
+  240  docker container exec -it myds mysql -uroot
+  241  docker container exec -it myds mysql -uroot
+  242  docker container exec -it myds bash
+  243  docker container stop myds
+  244  docker container start myds
+  245  docker exec myds mysql -uroot --execute "show databases;"
+  246  docker volume prune
+  247  docker volume ls
+  248  docker container inspect myds
+  249  docker container prune
+  250  docker volume ls
+  251  docker volume prune
+  252  docker volume ls
+  253  docker container ls
+  254  docker volume inspect 5534525c20acb489f2011c7d7fea8857a305d85bbd350ec95835f4db856cbf6a
+  255  docker container rm -f myds
+  256  docker volume ls
+  257  docker volume prune
+  258  docker container run -d --name -v myds_db:/var/lib/mysql myds -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  259  docker container run -d --name myds -v myds_db:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  260  docker volume ls
+  261  docker inspect myds_db
+  262  docker exec myds mysql -uroot --execute "create database mydb;"
+  263  docker exec myds mysql -uroot --execute "show databases;"
+  264  history | tail -n15
+  265  docker container ls
+  266  docker volume ls
+  267  docker container rm -f myds
+  268  docker volume ls
+  269  docker container run -d --name myds -v myds_db:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  270  docker exec myds mysql -uroot --execute "show databases;"
+  271  docker volume inspect myds_db 
+  272  docker image ls
+  273  docker image ls | grep alpine_apache
+  274  docker container run -v //tmp/apachelogs:/var/log/apache2 --name web01 -p 8081:80 alpine_apache2
+  275  history | tain -n 15
+  276  history | tail -n 15
+  277  cd /c/Users/Dell\ lap/
+  278  mkdir aug7
+  279  pwd
+  280  C:
+  281  cd aug7/
+  282  ls
+  283  docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2 --name web02 -p 8082:80 alpine_apache2
+  284  docker container rm -f web02
+  285  docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2:rw --name web02 -p 8082:80 alpine_apache2
+  286  #docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2:rw --name web02 -p 80 82:80 alpine_apache2
+  287  docker container ls
+  288  docker container inspect myds
+  289  docker container inspect web03
+  290  cd -
+  291  cd /d/docker-workshop/aug6/pinger/
+  292  ls
+  293  docker build -t pinger .
+  294  docker image history pinger
+  295  docker image history nginx
+  296  docker container run --rm pinger
+  297  docker container ls -a
+  298  history | tail -n 10
+  299  docker container run --rm pinger ping -c 4 yahoo.com
+  300  docker container run --rm pinger ping -c 4 yahoo.com
+  301  docker container run --rm pinger ping -c 4 yahoo.com oracle.com
+  302  docker image history pinger
+  303  docker build -t pinger .
+  304  docker container run --rm pinger
+  305  docker container run --rm pinger yahoo.com
+  306  docker container run --rm pinger ls /var
+  307  docker container run --rm pinger oracle.com
+  308  docker build -t pinger .
+  309  docker container run --rm pinger
+  310  docker container run -it pinger sh
+  311  docker image history pinger
+  312  docker build -t pinger .
+  313  docker container run -it pinger sh
+  314  docker build -t pinger .
+  315  docker container run -it pinger sh
+  316  docker build -t pinger .
+  317  docker container run -it pinger sh
+  318  docker build -t pinger .
+  319  docker container run --rmpinger
+  320  docker container run --rm pinger
+  321  docker container run --rm pinger /usr/bin/myping.sh www.google.com
+  322  docker build -t pinger .
+  323  docker container run --rm pinger
+  324  docker container run -it pinger sh
+  325  docker container run -it --entrypoing "sh" pinger sh
+  326  docker container run -it --entrypoint "sh" pinger sh
+  327  docker build -t pinger .
+  328  docker container run --rm pinger
+  329  docker image rm bcf346bd5ae5
+  330  docker image rm -f bcf346bd5ae5
+  331  docker image rm pinger
+  332  docker image rm bcf346bd5ae5
+  333  docker build -t pinger .
+  334  docker image rm pinger
+  335  docker image prune
+  336  docker image rm bcf346bd5ae5
+  337  docker image rm -f bcf346bd5ae5
+  338  docker build -t pinger .
+  339  docker container prune
+  340  docker image rm -f bcf346bd5ae5
+  341  docker image rm pinger
+  342  docker image rm -f bcf346bd5ae5
+  343  docker build -t pinger .
+  344  docker container run 
+  345  docker build -t pinger .
+  346  docker container run -it pinger sh
+  347  docker build -t pinger .
+  348  docker image rm pinger
+  349  docker build -t pinger .
+  350  docker container run --rm pinger
+  351  docker container run --rm pinger google.com oracle.com yahoo.com
+  352  docker container run --rm pinger google.com oracle.com yahoo.com
+  353  docker container run --rm alpine env
+  354  docker container run --rm -e MYENV=somevalue alpine env
+  355  docker container run --it --rm alpine_apache2 bash
+  356  docker container run -it --rm alpine_apache2 bash
+  357  docker container run -it --rm alpine_apache2 sh
+  358  docker container prune
+  359  docker image ls | grep alpine_apache
+  360  cd ..
+  361  cd alpine_apache2/
+  362  docker build -t alpine_apache2:3 -t alpine_apache2 .
+  363  docker container run -d --name web01 -e APACHE_PORT=9999 -p 9090:9999 alpine_apache2
+  364  docker container rm -f web01
+  365  docker container run -d --name web01 -e APACHE_PORT=9999 -p 9090:9999 alpine_apache2
+  366  docker container exec web01 grep -i listen /etc/apache2/httpd.conf
+  367  docker image tag alpine_apache2:3 adityaprabhakara/alpine_apache2:3
+  368  docker image tag alpine_apache2 adityaprabhakara/alpine_apache2
+  369  docker image push adityaprabhakara/alpine_apache2
+  370  docker image push adityaprabhakara/alpine_apache2:3
+  371  cd ..
+  372  cd stack/
+  373  ls
+  374  docker container ls
+  375  docker container rm -f $(docker container ls -q)
+  376  docker container prune
+  377  docker-compose -f web1.yml up
+  378  docker-compose -f web1.yml up
+  379  docker container rm -f $(docker container ls -a -q)
+  380  #docker-compose -f web1.yml up
+  381  cat web1.yml 
+  382  docker-compose -f web1.yml up -d
+  383  docker-compose -f web1.yml down
+  384  docker-compose -f web1.yml up
+  385  docker-compose -f web1.yml down
+  386  docker-compose -f web1.yml up -d
+  387  docker container ls
+  388  docker container exec stack_web01_1 ping web02
+  389  docker-compose -f web1.yml down
+  390  docker-compose -f web1.yml up -d
+  391  docker-compose -f mysql.yml up -d
+  392  docker-compose -f mysql.yml up -d
+  393  docker container ls
+  394  docker-compose -f mysql.yml down
+  395  docker-compose -f web1.yml down
+  396  docker volume prune
+  397  docker-compose -f mysql.yml down
+  398  docker-compose -f mysql.yml up
+  399  docker-compose -f mysql.yml up
+  400  docker-compose -f mysql.yml up -d
+  401  docker volume ls
+  402  docker volume inspect stack_mysql_db
+  403  docker container ls
+  404  docker exec stack_mydb_1 mysql -uroot --execute "show databases;"
+  405  docker-compose -f mysql.yml down
+  406  docker-compose -f blog.yml up
+  407  docker-compose -f blog.yml up -d
+  408  docker container ls 
+  409  docker container exec stack_mydb_1 mysql -uroot -pexample
+  410  docker-compose -f blog.yml down
+  411  docker volume ls
+  412  docker remove stack_mysql_db
+  413  docker volume rm stack_mysql_db
+  414  docker-compose -f blog.yml up -d
+  415  docker container ls
+  416  docker container ls -a
+  417  docker container logs stack_ghost_1
+  418  docker container exec stack_mydb_1 mysql -uroot -pexample
+  419  docker container exec stack_mydb_1 mysql -uroot -pexample --execute "show databases;"
+  420  docker-compose -f blog.yml up -d
+  421  docker container ls -a
+  422  docker container logs stack_ghost_1
+  423  docker-compose -f blog.yml down
+  424  docker volume prune
+  425  docker-compose -f blog.yml up -d
+  426  docker container ls
+  427  docker image prune
+  428  docker image ls
+  429  docker image rm -f eb69f2c9ac38
+  430  docker image rm --help
+  431  docker image --help
+  432  docker container ls
+  433  docker inspect stack_mydb_1
+  434  docker-compose -f blog.yml down
+  435  docker-compose -f with_build.yml up
+  436  d
+  437  docker-compose -f with_build.yml down
+  438  docker-compose -f with_build.yml up
+  439  docker-compose -f with_build.yml up
+  440  docker-compose -f with_build.yml up
+  441  docker-compose -f with_build.yml down
+  442  docker-compose -f with_build.yml up
+  443  docker image rm alpine_apache2
+  444  docker image rm adityaprabhakara/alpine_apache2
+  445  docker-compose -f with_build.yml up
+  446  ls
+  447  cd code
+  448  ls
+  449  cat index.html 
+  450  cat Dockerfile 
+  451  docker-compose -f with_build.yml up
+  452  cd ..
+  453  docker-compose -f with_build.yml up
+  454  docker-compose -f with_build.yml down
+  455  docker image ls | grep alpine_apache2
+  456  docker image rm -f e60d8c93d385
+  457  docker image rm -f eb69f2c9ac38
+  458  docker image rm -f eb69f2c9ac38
+  459  docker image pull adityaprabhakara/alpine_apache2
+  460  docker-compose -f with_build.yml up
+  461  docker-compose -f with_build.yml down
+  462  docker-compose -f with_build.yml up
+  463  docker-compose -f with_build.yml down
+  464  docker-compose -f with_build.yml up
+  465  docker-compose -f with_build.yml down
+  466  docker-compose -f with_build.yml up
+  467  docker-compose -f with_build.yml down
+  468  docker-compose remove stack_webbuild01:latest
+  469  docker-compose image rm stack_webbuild01:latest
+  470  docker image rm stack_webbuild01:latest
+  471  docker-compose -f with_build.yml up
+  472  docker image rm stack_webbuild01:latest
+  473  docker-compose -f with_build.yml down
+  474  docker image rm stack_webbuild01:latest
+  475  docker-compose -f with_build.yml up
+  476  docker-compose -f with_build.yml up --help
+  477  docker-compose -f with_build.yml up --build
+  478  docker-compose -f with_build.yml down
+  479  docker-compose -f with_build.yml up --build
+  480  history > history.txt
+  481  exit
+  482  minikube --version
+  483  minikube version
+  484  minikube start
+  485  minikube ip
+  486  kubectl version
+  487  kubectl get pods
+  488  kubectl get deployments
+  489  kubectl delete deployment helloworld-deployment helloworld-v1-deployment helloworld-v2-deployment
+  490  kubectl get svc
+  491  kubectl delete service db-blog-svc echoheaders-default helloworld-svc helloworld-v1 helloworld-v2 wp-blog-svc
+  492  cd ../..
+  493  cd aug6/
+  494  cd pod/
+  495  kubectl get pods
+  496  kubectl get rc 
+  497  kubectl delete rc nginx-ingress-controller echoheaders
+  498  kubectl get pods
+  499  kubectl get pods
+  500  kubectl get pods
+  501  kubectl get pods
+  502  kubectl get pods
+  503  kubectl get pods
+  504  kubectl create -f pod-helloworld.yml 
+  505  kubectl get pods
+  506  kubectl describe pod my-nginx
+  507  kubectl describe pod my-nginx
+  508  kubectl get pods
+  509  kubectl get pods
+  510  kubectl delete pod my-nginx
+  511  kubectl get pods
+  512  kubectl get rc
+  513  kubectl get pods
+  514  cd ../rc
+  515  kubectl create -f rc-helloworld.yml 
+  516  kubectl get replicationcontroller
+  517  kubectl get rc
+  518  kubectl get pods
+  519  kubectl describe rc helloworld-controller
+  520  kubectl get pods
+  521  kubectl get rc --help
+  522  kubectl get rc
+  523  kubectl get pods
+  524  kubectl delete pod helloworld-controller-6jpq5
+  525  kubectl get pods
+  526  kubectl get pods
+  527  kubectl scale rc helloworld-controller --replicas 10
+  528  kubect get pods
+  529  kubectl get pods
+  530  kubectl get pods
+  531  kubectl scale rc helloworld-controller --replicas 2
+  532  kubectl get pods
+  533  kubectl get pods
+  534  kubectl delete -f rc-helloworld.yml 
+  535  #kubectl delete rc "helloworld-controller"
+  536  kubectl get pods
+  537  kubectl get rc
+  538  cd ..
+  539  kubectl create -f pod/pod-helloworld.yml 
+  540  kubectl create -f pod/pod-helloworld.yml 
+  541  kubectl get pods
+  542  kubectl create -f rc/rc-helloworld.yml 
+  543  kubectl get rc
+  544  kubectl get pods
+  545  kubectl get pods --show-labels
+  546  kubectl delete pod my-nginx
+  547  kubectl delete -f rc/rc-helloworld.yml 
+  548  kubectl delete -f pod/pod-helloworld.yml 
+  549  kubectl create -f deployment/dep-helloworld.yml 
+  550  kubectl describe deploy "helloworld-deployment"
+  551  kubectl get rs
+  552  kubectl get pods
+  553  kubectl get deploy 
+  554  kubectl get rs
+  555  kubectl get pods
+  556  kubectl get rs
+  557  kubectl delete rs helloworld-deployment-bf5b9bc9d
+  558  kubectl get rs
+  559  kubectl get rs
+  560  kubectl describe deploy "helloworld-deployment"
+  561  kubectl get pods
+  562  kubectl scale deployment helloworld-deployment --replicas 5
+  563  kubectl get pods
+  564  kubectl scale deployment helloworld-deployment --replicas 0
+  565  kubectl get pods
+  566  kubectl get pods
+  567  kubectl scale deployment helloworld-deployment --replicas 2
+  568  kubectl get pods
+  569  kubectl scale deployment/helloworld-deployment --replicas 2
+  570  minikube version
+  571  dig google.com
+  572  clear
+  573  ls
+  574  cd service/
+  575  ls
+  576  vi helloworld-service.yml 
+  577  kubectl get pods
+  578  cd ..
+  579  kubectl delete -f deployment/dep-helloworld.yml 
+  580  kubectl create -f deployment/dep-helloworld.yml 
+  581  kubectl scale deployment/helloworld-deployment --replicas 0
+  582  kubectl get pods
+  583  mv service/helloworld-service.yml svc-helloworld.yml
+  584  cat svc-helloworld.yml 
+  585  vi svc-helloworld.yml 
+  586  kubectl create -f svc-helloworld.yml 
+  587  kubectl get services
+  588  kubectl get svc
+  589  kubectl describe svc helloworld-service-nodeport
+  590  kubectl scale deployment/helloworld-deployment --replicas 1
+  591  kubectl describe svc helloworld-service-nodeport
+  592  minikube ip
+  593  kubectl get pods
+  594  kubectl logs helloworld-deployment-bf5b9bc9d-9wdcw
+  595  kubectl describe svc helloworld-service-nodeport
+  596  kubectl get pods
+  597  kubectl delete pod helloworld-deployment-bf5b9bc9d-9wdcw
+  598  kubectl describe svc helloworld-service-nodeport
+  599  kubectl get pods
+  600  kubectl describe svc helloworld-service-nodeport
+  601  kubectl scale deployment/helloworld-deployment --replicas 2
+  602  kubectl describe svc helloworld-service-nodeport
+  603  kubectl get pods
+  604  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  605  kubectl logs helloworld-deployment-bf5b9bc9d-xw2sd
+  606  kubectl logs helloworld-deployment-bf5b9bc9d-xw2sd
+  607  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  608  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  609  kubectl logs helloworld-deployment-bf5b9bc9d-xw2sd
+  610  kubectl logs helloworld-deployment-bf5b9bc9d-xw2sd
+  611  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  612  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  613  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  614  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  615  curl
+  616  while true; do curl http://192.168.99.101:31001/ ;end;  ;
+  617  while true; do curl http://192.168.99.101:31001/ ;end;  ;
+  618  while true; do curl http://192.168.99.101:31001/ ;end;  ;
+  619  while true; do curl http://192.168.99.101:31001/; end; ;
+  620  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  621  kubectl logs helloworld-deployment-bf5b9bc9d-clvn7
+  622  kubectl logs helloworld-deployment-bf5b9bc9d-xw2sd
+  623  kubectl describe svc helloworld-service-nodeport
+  624  kubectl delete -f deployment/dep-helloworld.yml 
+  625  kubectl create -f deployment/dep-helloworld.yml 
+  626  kubectl describe svc "helloworld-service-nodeport"
+  627  kubectl get svc "helloworld-service-nodeport"
+  628  minikube service "helloworld-service-nodeport" --url
+  629  kubectl create -f deployment/blog-site.yml 
+  630  kubectl get pods
+  631  kubectl get pods
+  632  kubectl describe pod blog-site-ffbb6df59-46dvv
+  633  kubectl get pods
+  634  kubectl get pods
+  635  kubectl describe pod blog-site-ffbb6df59-46dvv
+  636  kubectl get pods
+  637  kubectl logs blog-site-ffbb6df59-46dvv
+  638  kubectl logs blog-site-ffbb6df59-46dvv wp-full
+  639  kubectl logs blog-site-ffbb6df59-46dvv db-full
+  640  kubectl create -f deployment/blog-site-svc.yml 
+  641  minikube service blog-site-svc --url
+  642  kubectl delete secret blog-secrets
+  643  cat deployment/secrets.yml 
+  644  echo -n password | base64
+  645  echo -n example | base64
+  646  echo -n example | base64
+  647  kubectl create -f deployment/secrets.yml 
+  648  kubectl get secrets blog-secrets
+  649  kubectl describe secrets blog-secrets 
+  650  kubectl get secrets blog-secrets -o yaml
+  651  kubectl get secret blog-secrets -o yaml
+  652  echo -n ZXhhbXBsZQ== | base64 --decode
+  653  kubectl get deployments
+  654  kubectl delete -f deployment/blog-site-with-secrets.yml 
+  655  kubectl create -f deployment/blog-site-with-secrets.yml 
+  656  kubectl get pods
+  657  kubectl get pods
+  658  kubectl get pods
+  659  kubectl get svc
+  660  minikube service "helloworld-service-nodeport" --url
+  661  kubectl rollout update --help
+  662  kubectl set --update
+  663  kubectl get deploy
+  664  kubectl set image deploy helloworld-deployment nginx=adityaprabhakara/alpine_apache2
+  665  kubectl get pods
+  666  kubectl describe pod helloworld-deployment-969b548b9-qpnb7
+  667  kubectl scale deploy helloworld-deploy --replicas 0
+  668  kubectl scale deploy helloworld-deployment --replicas 0
+  669  kubectl scale deploy helloworld-deployment --replicas 1
+  670  kubectl scale deploy helloworld-deployment --replicas 10
+  671  kubectl get pods
+  672  kubectl get pods
+  673  kubectl get pods
+  674  kubectl rollout status deploy helloworld-deployment
+  675  kubectl set image deploy helloworld-deployment nginx=nginx:alpine
+  676  kubectl rollout status deploy helloworld-deployment
+  677  history | tail -n 10
+  678  kubectl rollout undo
+  679  kubectl rollout undo deploy helloworld-deployment
+  680  kubectl rollout status deploy helloworld-deployment
+  681  history | tail -n 10
+  682* 
+  683  history | tail -n 10
+  684  kubectl rollout history
+  685  kubectl rollout history deploy helloworld-deployment
+  686  kubectl delete -f deployment/dep-helloworld.yml 
+  687  kubectl create -f deployment/dep-helloworld.yml --record 
+  688  kubectl rollout history deploy helloworld-deployment
+  689  kubectl set image deploy helloworld-deployment nginx=adityaprabhakara/alpine_apache2
+  690  kubectl rollout history deploy helloworld-deployment
+  691  kubectl set image deploy helloworld-deployment nginx=httpd
+  692  kubectl rollout history deploy helloworld-deployment
+  693  kubectl rollout undo --help
+  694  kubectl rollout history deploy helloworld-deployment
+  695  kubectl rollout undo --to-revision=1
+  696  kubectl rollout undo deploy helloworld-deployment --to-revision=1
+  697  kubectl rollout history deploy helloworld-deployment
+  698  history | tail -n 40
+  699  kubectl edit deploy helloworld-deployment
+  700  kubectl edit deploy helloworld-deployment
+  701  kubectl set image deploy helloworld-deployment nginx=nginx
+  702  kubectl edit deploy helloworld-deployment
+  703  kubectl set image deploy helloworld-deployment nginx=nginx
+  704  kubectl rollout history deploy helloworld-deployment
+  705  history > day3.txt
