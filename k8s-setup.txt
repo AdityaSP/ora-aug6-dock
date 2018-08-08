@@ -1,0 +1,25 @@
+If hyperv is running
+Search for "turn windows feature on or off"
+uncheck "Hyper-V"
+
+------------------------------------------------------------------
+
+Requires virutalbox - If its already installed then not required
+
+------------------------------------------------------------------
+
+1. minikube
+
+          download minikube-windows-amd64 from https://github.com/kubernetes/minikube/releases/tag/v0.25.0
+
+          2. rename the exe to minikube.exe
+
+          3. put the directory where minikube is saved into the path environment variable 
+------------------------------------------------------------------
+4. kubectl
+          Download kubectl from this location
+          https://storage.googleapis.com/kubernetes-release/release/v1.11.0/bin/windows/amd64/kubectl.exe
+          5. put kubectl in the same location as minikube
+          
+------------------------------------------------------------------          
+6. minikube start
