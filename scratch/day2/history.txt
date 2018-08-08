@@ -1,0 +1,500 @@
+  230  STEP="Looking for vboxmanage.exe"
+  231  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  232  BLUE='\033[1;34m'
+  233  GREEN='\033[0;32m'
+  234  NC='\033[0m'
+  235  #clear all_proxy if not socks address
+  236  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  237  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  238  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  239  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  240  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  241  VM_EXISTS_CODE=$?
+  242  set -e
+  243  STEP="Checking if machine $VM exists"
+  244  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  245  STEP="Checking status on $VM"
+  246  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  247  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  248  STEP="Setting env"
+  249  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  250  STEP="Finalize"
+  251  clear
+  252  cat << EOF
+  253                          ##         .
+  254                    ## ## ##        ==
+  255                 ## ## ## ## ##    ===
+  256             /"""""""""""""""""\___/ ===
+  257        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  258             \______ o           __/
+  259               \    \         __/
+  260                \____\_______/
+  261  EOF
+  262  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  263  echo "For help getting started, check out the docs at https://docs.docker.com"
+  264  echo
+  265  cd
+  266  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  267  export -f docker
+  268  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  269  docker-machine env
+  270  dockerdock
+  271  docker-machine stop
+  272  docker-machine start
+  273  docker-machine env
+  274  docker container run -d -p 5000:5000 --name myreg registry
+  275  docker pull hello-world
+  276  docker tag hello-world 127.0.0.1:5000/myhw
+  277  docker image ls myhw
+  278  docker push 127.0.0.1:5000/myhw
+  279  docker image remove hello-world
+  280  docker image remove 127.0.0.1/hello-world
+  281  docker image remove 127.0.0.1:5000/hello-world
+  282  docker image remove 127.0.0.1:5000/myhw
+  283  docker pull 127.0.0.1:5000/myhw
+  284  docker-machine stop
+  285  docker-machine start
+  286  docker-machine env
+  287  docker image ls
+  288  docker image tag code adityaprabhakara/code
+  289  docker image push adityaprabhakara/code
+  290  history
+  291  docker image pull registry
+  292  docker container run -d -p 5001:5000 --name personal registry
+  293  docker image tag code 127.0.0.1:5001/code
+  294  #docker image pull registry
+  295  #docker container run -d -p 5001:5000 --name personal registry
+  296  docker image push 127.0.0.1:5001/code
+  297  docker image rm 127.0.0.1:5001/code
+  298  docker image pull 127.0.0.1:5001/code
+  299  docker image ls
+  300  docker image pull 127.0.0.1:5001/code
+  301  #docker container run -d -p 5001:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  302  docker container run -d -p 5002:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  303  docker image tag code 127.0.0.1:5002/code
+  304  docker image push 127.0.0.1:5002/code
+  305  cd /tmp/myimages
+  306  #docker container run -d -p 5002:5000 -v /tmp/myimages:/var/lib/registry --name personal2 registry
+  307  docker rm personal2
+  308  docker rm -f personal2
+  309  docker container run -d -p 5002:5000 -v //tmp/myimages:/var/lib/registry --name personal2 registry
+  310  docker image push 127.0.0.1:5002/code
+  311  cd /tmp/
+  312  ls
+  313  cd myimages
+  314  docker-machine stop
+  315  exit
+  316  #!/bin/bash
+  317  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  318  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  319  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  320  # Docker for Windows when launching using the Quickstart.
+  321  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  322  VM=${DOCKER_MACHINE_NAME-default}
+  323  DOCKER_MACHINE=./docker-machine.exe
+  324  STEP="Looking for vboxmanage.exe"
+  325  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  326  BLUE='\033[1;34m'
+  327  GREEN='\033[0;32m'
+  328  NC='\033[0m'
+  329  #clear all_proxy if not socks address
+  330  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  331  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  332  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  333  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  334  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  335  VM_EXISTS_CODE=$?
+  336  set -e
+  337  STEP="Checking if machine $VM exists"
+  338  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  339  STEP="Checking status on $VM"
+  340  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  341  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  342  STEP="Setting env"
+  343  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  344  STEP="Finalize"
+  345  clear
+  346  cat << EOF
+  347                          ##         .
+  348                    ## ## ##        ==
+  349                 ## ## ## ## ##    ===
+  350             /"""""""""""""""""\___/ ===
+  351        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  352             \______ o           __/
+  353               \    \         __/
+  354                \____\_______/
+  355  EOF
+  356  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  357  echo "For help getting started, check out the docs at https://docs.docker.com"
+  358  echo
+  359  cd
+  360  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  361  export -f docker
+  362  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  363  docker-machine env
+  364  docker container ls
+  365  docker container ls
+  366  docker swarm leave
+  367  docker swarm leave --force
+  368  docker container rm 4095
+  369  docker container ls
+  370  docker container ls
+  371  docker container ls
+  372  docker container inspect web01 | grep -i ipaddress
+  373  docker-machine stop
+  374  exit
+  375  #!/bin/bash
+  376  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  377  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  378  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  379  # Docker for Windows when launching using the Quickstart.
+  380  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  381  VM=${DOCKER_MACHINE_NAME-default}
+  382  DOCKER_MACHINE=./docker-machine.exe
+  383  STEP="Looking for vboxmanage.exe"
+  384  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  385  BLUE='\033[1;34m'
+  386  GREEN='\033[0;32m'
+  387  NC='\033[0m'
+  388  #clear all_proxy if not socks address
+  389  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  390  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  391  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  392  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  393  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  394  VM_EXISTS_CODE=$?
+  395  set -e
+  396  STEP="Checking if machine $VM exists"
+  397  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  398  STEP="Checking status on $VM"
+  399  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  400  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  401  STEP="Setting env"
+  402  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  403  STEP="Finalize"
+  404  clear
+  405  cat << EOF
+  406                          ##         .
+  407                    ## ## ##        ==
+  408                 ## ## ## ## ##    ===
+  409             /"""""""""""""""""\___/ ===
+  410        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  411             \______ o           __/
+  412               \    \         __/
+  413                \____\_______/
+  414  EOF
+  415  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  416  echo "For help getting started, check out the docs at https://docs.docker.com"
+  417  echo
+  418  cd
+  419  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  420  export -f docker
+  421  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  422  #!/bin/bash
+  423  trap '[ "$?" -eq 0 ] || read -p "Looks like something went wrong in step ´$STEP´... Press any key to continue..."' EXIT
+  424  # TODO: I'm sure this is not very robust.  But, it is needed for now to ensure
+  425  # that binaries provided by Docker Toolbox over-ride binaries provided by
+  426  # Docker for Windows when launching using the Quickstart.
+  427  export PATH="/c/Program Files/Docker Toolbox:$PATH"
+  428  VM=${DOCKER_MACHINE_NAME-default}
+  429  DOCKER_MACHINE=./docker-machine.exe
+  430  STEP="Looking for vboxmanage.exe"
+  431  if [ ! -z "$VBOX_MSI_INSTALL_PATH" ]; then   VBOXMANAGE="${VBOX_MSI_INSTALL_PATH}VBoxManage.exe"; else   VBOXMANAGE="${VBOX_INSTALL_PATH}VBoxManage.exe"; fi
+  432  BLUE='\033[1;34m'
+  433  GREEN='\033[0;32m'
+  434  NC='\033[0m'
+  435  #clear all_proxy if not socks address
+  436  if  [[ $ALL_PROXY != socks* ]]; then   unset ALL_PROXY; fi
+  437  if  [[ $all_proxy != socks* ]]; then   unset all_proxy; fi
+  438  if [ ! -f "${DOCKER_MACHINE}" ]; then   echo "Docker Machine is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  439  if [ ! -f "${VBOXMANAGE}" ]; then   echo "VirtualBox is not installed. Please re-run the Toolbox Installer and try again.";   exit 1; fi
+  440  "${VBOXMANAGE}" list vms | grep \""${VM}"\" &> /dev/null
+  441  VM_EXISTS_CODE=$?
+  442  set -e
+  443  STEP="Checking if machine $VM exists"
+  444  if [ $VM_EXISTS_CODE -eq 1 ]; then   "${DOCKER_MACHINE}" rm -f "${VM}" &> /dev/null || :;   rm -rf ~/.docker/machine/machines/"${VM}"   if [ "${HTTP_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTP_PROXY=$HTTP_PROXY";   fi;   if [ "${HTTPS_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env HTTPS_PROXY=$HTTPS_PROXY";   fi;   if [ "${NO_PROXY}" ]; then     PROXY_ENV="$PROXY_ENV --engine-env NO_PROXY=$NO_PROXY";   fi;   "${DOCKER_MACHINE}" create -d virtualbox $PROXY_ENV "${VM}"; fi
+  445  STEP="Checking status on $VM"
+  446  VM_STATUS="$( set +e ; ${DOCKER_MACHINE} status ${VM} )"
+  447  if [ "${VM_STATUS}" != "Running" ]; then   "${DOCKER_MACHINE}" start "${VM}";   yes | "${DOCKER_MACHINE}" regenerate-certs "${VM}"; fi
+  448  STEP="Setting env"
+  449  eval "$(${DOCKER_MACHINE} env --shell=bash --no-proxy ${VM})"
+  450  STEP="Finalize"
+  451  clear
+  452  cat << EOF
+  453                          ##         .
+  454                    ## ## ##        ==
+  455                 ## ## ## ## ##    ===
+  456             /"""""""""""""""""\___/ ===
+  457        ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+  458             \______ o           __/
+  459               \    \         __/
+  460                \____\_______/
+  461  EOF
+  462  echo -e "${BLUE}docker${NC} is configured to use the ${GREEN}${VM}${NC} machine with IP ${GREEN}$(${DOCKER_MACHINE} ip ${VM})${NC}"
+  463  echo "For help getting started, check out the docs at https://docs.docker.com"
+  464  echo
+  465  cd
+  466  docker () {   MSYS_NO_PATHCONV=1 docker.exe "$@"; }
+  467  export -f docker
+  468  if [ $# -eq 0 ]; then   echo "Start interactive shell";   exec "$BASH" --login -i; else   echo "Start shell with command";   exec "$BASH" -c "$*"; fi
+  469  cd /d/docker-workshop/aug6/
+  470  ls
+  471  docker container ls
+  472  eval $("C:\Program Files\Docker Toolbox\docker-machine.exe" env)
+  473  docker container ls
+  474  docker container run -d mysql
+  475* docker container
+  476  docker container ls -a
+  477  docker container logs ec2eb980bbdb
+  478  #docker container run -d --name mysql
+  479  docker container run --help
+  480  docker container run -d --name myds -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  481  docker container ls -a
+  482  docker container logs 5174720c954ba0cd70da496ae95a59f72a5cf4a96f3eac23c07f010cc8d1060a
+  483  history | tail -n15
+  484  docker container ls
+  485  docker container exec -it myds bash
+  486  docker container exec -it myds mysql -uroot
+  487  docker container exec -it myds mysql -uroot
+  488  docker container exec -it myds bash
+  489  docker container stop myds
+  490  docker container start myds
+  491  docker exec myds mysql -uroot --execute "show databases;"
+  492  docker volume prune
+  493  docker volume ls
+  494  docker container inspect myds
+  495  docker container prune
+  496  docker volume ls
+  497  docker volume prune
+  498  docker volume ls
+  499  docker container ls
+  500  docker volume inspect 5534525c20acb489f2011c7d7fea8857a305d85bbd350ec95835f4db856cbf6a
+  501  docker container rm -f myds
+  502  docker volume ls
+  503  docker volume prune
+  504  docker container run -d --name -v myds_db:/var/lib/mysql myds -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  505  docker container run -d --name myds -v myds_db:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  506  docker volume ls
+  507  docker inspect myds_db
+  508  docker exec myds mysql -uroot --execute "create database mydb;"
+  509  docker exec myds mysql -uroot --execute "show databases;"
+  510  history | tail -n15
+  511  docker container ls
+  512  docker volume ls
+  513  docker container rm -f myds
+  514  docker volume ls
+  515  docker container run -d --name myds -v myds_db:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+  516  docker exec myds mysql -uroot --execute "show databases;"
+  517  docker volume inspect myds_db 
+  518  docker image ls
+  519  docker image ls | grep alpine_apache
+  520  docker container run -v //tmp/apachelogs:/var/log/apache2 --name web01 -p 8081:80 alpine_apache2
+  521  history | tain -n 15
+  522  history | tail -n 15
+  523  cd /c/Users/Dell\ lap/
+  524  mkdir aug7
+  525  pwd
+  526  C:
+  527  cd aug7/
+  528  ls
+  529  docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2 --name web02 -p 8082:80 alpine_apache2
+  530  docker container rm -f web02
+  531  docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2:rw --name web02 -p 8082:80 alpine_apache2
+  532  #docker container run -v "/c/Users/Dell lap/aug7":/var/log/apache2:rw --name web02 -p 80 82:80 alpine_apache2
+  533  docker container ls
+  534  docker container inspect myds
+  535  docker container inspect web03
+  536  cd -
+  537  cd /d/docker-workshop/aug6/pinger/
+  538  ls
+  539  docker build -t pinger .
+  540  docker image history pinger
+  541  docker image history nginx
+  542  docker container run --rm pinger
+  543  docker container ls -a
+  544  history | tail -n 10
+  545  docker container run --rm pinger ping -c 4 yahoo.com
+  546  docker container run --rm pinger ping -c 4 yahoo.com
+  547  docker container run --rm pinger ping -c 4 yahoo.com oracle.com
+  548  docker image history pinger
+  549  docker build -t pinger .
+  550  docker container run --rm pinger
+  551  docker container run --rm pinger yahoo.com
+  552  docker container run --rm pinger ls /var
+  553  docker container run --rm pinger oracle.com
+  554  docker build -t pinger .
+  555  docker container run --rm pinger
+  556  docker container run -it pinger sh
+  557  docker image history pinger
+  558  docker build -t pinger .
+  559  docker container run -it pinger sh
+  560  docker build -t pinger .
+  561  docker container run -it pinger sh
+  562  docker build -t pinger .
+  563  docker container run -it pinger sh
+  564  docker build -t pinger .
+  565  docker container run --rmpinger
+  566  docker container run --rm pinger
+  567  docker container run --rm pinger /usr/bin/myping.sh www.google.com
+  568  docker build -t pinger .
+  569  docker container run --rm pinger
+  570  docker container run -it pinger sh
+  571  docker container run -it --entrypoing "sh" pinger sh
+  572  docker container run -it --entrypoint "sh" pinger sh
+  573  docker build -t pinger .
+  574  docker container run --rm pinger
+  575  docker image rm bcf346bd5ae5
+  576  docker image rm -f bcf346bd5ae5
+  577  docker image rm pinger
+  578  docker image rm bcf346bd5ae5
+  579  docker build -t pinger .
+  580  docker image rm pinger
+  581  docker image prune
+  582  docker image rm bcf346bd5ae5
+  583  docker image rm -f bcf346bd5ae5
+  584  docker build -t pinger .
+  585  docker container prune
+  586  docker image rm -f bcf346bd5ae5
+  587  docker image rm pinger
+  588  docker image rm -f bcf346bd5ae5
+  589* 
+  590  docker build -t pinger .
+  591* docker container run 
+  592  docker build -t pinger .
+  593  docker container run -it pinger sh
+  594  docker build -t pinger .
+  595  docker image rm pinger
+  596  docker build -t pinger .
+  597  docker container run --rm pinger
+  598  docker container run --rm pinger google.com oracle.com yahoo.com
+  599  docker container run --rm pinger google.com oracle.com yahoo.com
+  600  docker container run --rm alpine env
+  601  docker container run --rm -e MYENV=somevalue alpine env
+  602  docker container run --it --rm alpine_apache2 bash
+  603  docker container run -it --rm alpine_apache2 bash
+  604  docker container run -it --rm alpine_apache2 sh
+  605  docker container prune
+  606  docker image ls | grep alpine_apache
+  607  cd ..
+  608  cd alpine_apache2/
+  609  docker build -t alpine_apache2:3 -t alpine_apache2 .
+  610  docker container run -d --name web01 -e APACHE_PORT=9999 -p 9090:9999 alpine_apache2
+  611  docker container rm -f web01
+  612  docker container run -d --name web01 -e APACHE_PORT=9999 -p 9090:9999 alpine_apache2
+  613  docker container exec web01 grep -i listen /etc/apache2/httpd.conf
+  614  docker image tag alpine_apache2:3 adityaprabhakara/alpine_apache2:3
+  615  docker image tag alpine_apache2 adityaprabhakara/alpine_apache2
+  616  docker image push adityaprabhakara/alpine_apache2
+  617  docker image push adityaprabhakara/alpine_apache2:3
+  618  cd ..
+  619  cd stack/
+  620  ls
+  621  docker container ls
+  622  docker container rm -f $(docker container ls -q)
+  623  docker container prune
+  624  docker-compose -f web1.yml up
+  625  docker-compose -f web1.yml up
+  626  docker container rm -f $(docker container ls -a -q)
+  627  #docker-compose -f web1.yml up
+  628  cat web1.yml 
+  629  docker-compose -f web1.yml up -d
+  630  docker-compose -f web1.yml down
+  631  docker-compose -f web1.yml up
+  632  docker-compose -f web1.yml down
+  633  docker-compose -f web1.yml up -d
+  634  docker container ls
+  635  docker container exec stack_web01_1 ping web02
+  636  docker-compose -f web1.yml down
+  637  docker-compose -f web1.yml up -d
+  638  docker-compose -f mysql.yml up -d
+  639  docker-compose -f mysql.yml up -d
+  640  docker container ls
+  641  docker-compose -f mysql.yml down
+  642  docker-compose -f web1.yml down
+  643  docker volume prune
+  644  docker-compose -f mysql.yml down
+  645  docker-compose -f mysql.yml up
+  646  docker-compose -f mysql.yml up
+  647  docker-compose -f mysql.yml up -d
+  648  docker volume ls
+  649  docker volume inspect stack_mysql_db
+  650  docker container ls
+  651  docker exec stack_mydb_1 mysql -uroot --execute "show databases;"
+  652  docker-compose -f mysql.yml down
+  653  docker-compose -f blog.yml up
+  654  docker-compose -f blog.yml up -d
+  655  docker container ls 
+  656  docker container exec stack_mydb_1 mysql -uroot -pexample
+  657  docker-compose -f blog.yml down
+  658  docker volume ls
+  659  docker remove stack_mysql_db
+  660  docker volume rm stack_mysql_db
+  661  docker-compose -f blog.yml up -d
+  662  docker container ls
+  663  docker container ls -a
+  664  docker container logs stack_ghost_1
+  665  docker container exec stack_mydb_1 mysql -uroot -pexample
+  666  docker container exec stack_mydb_1 mysql -uroot -pexample --execute "show databases;"
+  667  docker-compose -f blog.yml up -d
+  668  docker container ls -a
+  669  docker container logs stack_ghost_1
+  670  docker-compose -f blog.yml down
+  671  docker volume prune
+  672  docker-compose -f blog.yml up -d
+  673  docker container ls
+  674  docker image prune
+  675  docker image ls
+  676* 
+  677  docker image rm -f eb69f2c9ac38
+  678  docker image rm --help
+  679  docker image --help
+  680* 
+  681  docker container ls
+  682  docker inspect stack_mydb_1
+  683  docker-compose -f blog.yml down
+  684  docker-compose -f with_build.yml up
+  685  d
+  686  docker-compose -f with_build.yml down
+  687  docker-compose -f with_build.yml up
+  688  docker-compose -f with_build.yml up
+  689  docker-compose -f with_build.yml up
+  690  docker-compose -f with_build.yml down
+  691  docker-compose -f with_build.yml up
+  692  docker image rm alpine_apache2
+  693  docker image rm adityaprabhakara/alpine_apache2
+  694  docker-compose -f with_build.yml up
+  695  ls
+  696  cd code
+  697  ls
+  698  cat index.html 
+  699  cat Dockerfile 
+  700  docker-compose -f with_build.yml up
+  701  cd ..
+  702  docker-compose -f with_build.yml up
+  703  docker-compose -f with_build.yml down
+  704  docker image ls | grep alpine_apache2
+  705  docker image rm -f e60d8c93d385
+  706  docker image rm -f eb69f2c9ac38
+  707  docker image rm -f eb69f2c9ac38
+  708  docker image pull adityaprabhakara/alpine_apache2
+  709  docker-compose -f with_build.yml up
+  710  docker-compose -f with_build.yml down
+  711  docker-compose -f with_build.yml up
+  712  docker-compose -f with_build.yml down
+  713  docker-compose -f with_build.yml up
+  714  docker-compose -f with_build.yml down
+  715  docker-compose -f with_build.yml up
+  716  docker-compose -f with_build.yml down
+  717  docker-compose remove stack_webbuild01:latest
+  718  docker-compose image rm stack_webbuild01:latest
+  719  docker image rm stack_webbuild01:latest
+  720  docker-compose -f with_build.yml up
+  721  docker image rm stack_webbuild01:latest
+  722  docker-compose -f with_build.yml down
+  723  docker image rm stack_webbuild01:latest
+  724  docker-compose -f with_build.yml up
+  725  docker-compose -f with_build.yml up --help
+  726  docker-compose -f with_build.yml up --build
+  727  docker-compose -f with_build.yml down
+  728  docker-compose -f with_build.yml up --build
+  729  history > history.txt
