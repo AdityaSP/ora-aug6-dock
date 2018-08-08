@@ -6,7 +6,7 @@ spec:
   ports:
   - port: 8888
     nodePort: 31001
-    targetPort: nginxport
+    targetPort: 80
     protocol: TCP
   selector:
     app: helloworld
