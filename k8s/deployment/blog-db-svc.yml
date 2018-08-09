@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-db-svc
+spec:
+  ports:
+  - port: 3306
+    nodePort: 31006
+    targetPort: blog-db-port
+    protocol: TCP
+  selector:
+    app: blog-db
+  type: NodePort       
