@@ -1,0 +1,20 @@
+#sudo apt install openssl
+
+#openssl genrsa -out user1.pem 2048
+docker run -it -v //var/lib/localkube/certs:/export frapsoft/openssl genrsa -out /export/user1.pem 2048
+
+#openssl req -new -key user1.pem -out user1.pem -subj "/CN=user1/O=myteam/"
+docker run -it -v //var/lib/localkube/certs:/export frapsoft/openssl req -new -key /export/user1.pem -out /export/user1-csr.pem -subj "/CN=user1/O=myteam/"
+
+#openssl x509 -req -in /export/user1-csr.pem -CA /export/ca.crt -CAkey ca.key -CAcreateserial -out /export/user1.crt -days 10000
+docker run -it -v //var/lib/localkube/certs:/export frapsoft/openssl x509 -req -in /export/user1-csr.pem -CA /export/ca.crt -CAkey /export/ca.key -CAcreateserial -out /export/user1.crt -days 10000
+
+
+kubectl config set-credentials user1 --client-certificate="C:\Users\Dell lap\.minikube\user1.crt" --client-key="C:\Users\Dell lap\.minikube\user1.key"
+
+kubectl config set-context user1 --cluster=minikube --user user1
+
+
+# to enable RBAC
+minikube stop
+minikube start --extra-config=apiserver.Authorization.Mode=RBAC
