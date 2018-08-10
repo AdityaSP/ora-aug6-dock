@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+ name: config-map-test
+spec:
+ containers:
+   - name: mycontainer
+     image: nginx:alpine
+     command: [ "/bin/sh", "-c", "env" ]
+     env:
+       - name: SPECIAL_LEVEL_KEY
+         valueFrom:
+           configMapKeyRef:
+             name: myconfig
+             key: MYENVVARIABLE
