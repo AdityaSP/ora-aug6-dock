@@ -1,0 +1,1011 @@
+Dell lap@Dell /d/docker-workshop/k8s-playground-master/xenial
+λ cddcd ../../aug6/
+Dell lap@Dell /d/docker-workshop/aug6
+λ ls
+alpine_apache2/  heapster/         metricserver/  rc/              stack/
+autoscaling/     history_day1.txt  monitoring/    resource-quota/  svc-helloworld.yml
+code/            history_day3.txt  pinger/        screendump.txt   user/
+configmap/       ingress/          pod/           sec.json
+deployment/      kube-on-aws/      pv-pvc/        service/
+Dell lap@Dell /d/docker-workshop/aug6
+λ 
+λ minikube addons enable default-storageclass
+default-storageclass was successfully enabled
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikube volume kubectl get pv
+NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                    STORAGECLASS   REASON    AGE
+mysql-pv-volume   2Gi        RWO            Retain           Bound     default/mysql-pv-claim   manual                   2h
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl kubectl get get mypv mysql=p-pv-volume /-o yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+  creationTimestamp: 2018-08-10T01:49:17Z
+  labels:
+    type: local
+  name: mysql-pv-volume
+  resourceVersion: "342173"
+  selfLink: /api/v1/persistentvolumes/mysql-pv-volume
+  uid: 97da05be-9c3f-11e8-b678-08002789a48f
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: mysql-pv-claim
+    namespace: default
+    resourceVersion: "342171"
+    uid: 97dcc653-9c3f-11e8-b678-08002789a48f
+  hostPath:
+    path: /tmp/data
+    type: ""
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+status:
+  phase: Bound
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pv mysql-pv-volume -o yamlc
+NAME             STATUS    VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mysql-pv-claim   Bound     mysql-pv-volume   2Gi        RWO            manual         2h
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pvc -o yamlmysql-pv-claim 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+  creationTimestamp: 2018-08-10T01:49:17Z
+  name: mysql-pv-claim
+  namespace: default
+  resourceVersion: "342175"
+  selfLink: /api/v1/namespaces/default/persistentvolumeclaims/mysql-pv-claim
+  uid: 97dcc653-9c3f-11e8-b678-08002789a48f
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
+  volumeName: mysql-pv-volume
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  phase: Bound
+Dell lap@Dell /d/docker-workshop/aug6
+λ 
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete -f pv-pvc/.
+service "mysql" deleted
+deployment "mysql" deleted
+persistentvolume "mysql-pv-volume" deleted
+persistentvolumeclaim "mysql-pv-claim" deleted
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete -f pv-pvc/.create -f pv-pvc/pv-pvc.yml 
+persistentvolume "mysql-pv-volume" created
+persistentvolumeclaim "mysql-pv-claim" created
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f pv-pvc/pv-pvc.yml 
+delete -f pv-pvc/.
+persistentvolume "mysql-pv-volume" deleted
+persistentvolumeclaim "mysql-pv-claim" deleted
+Error from server (NotFound): error when deleting "pv-pvc\\mysql-dep.yml": services "mysql" not found
+Error from server (NotFound): error when stopping "pv-pvc\\mysql-dep.yml": deployments.extensions "mysql" not found
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikube use-cockubectl config use-context minikube current-context
+minikube
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl config current-context
+delete -f pv-pvc/.
+create -f pv-pvc/pv-pvc.yml 
+persistentvolume "mysql-pv-volume" created
+persistentvolumeclaim "mysql-pv-claim" created
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikubectl create -f pv-pvc/mysql-dep.yml 
+deployment "mysql" created
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get deploy mysql
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+mysql     1         1         1            1           7s
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl detel lete -f pv-pvc/.
+deployment "mysql" deleted
+persistentvolume "mysql-pv-volume" deleted
+persistentvolumeclaim "mysql-pv-claim" deleted
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete -f pv-pvc/.pv-pvc.yml create
+persistentvolume "mysql-pv-volume" created
+persistentvolumeclaim "mysql-pv-claim" created
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f pv-pvc/pv-pvc.yml /mysql-dep.yml 
+deployment "mysql" created
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get deplo mysql
+the server doesn't have a resource type "dep"
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get dep mysqll mysqlo mysqly mysql
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+mysql     1         1         1            1           18s
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikubei ip
+192.168.99.101
+Dell lap@Dell /d/docker-workshop/aug6
+λ 
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get sbvc -a-all-namespaces
+NAMESPACE     NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+default       blog-db-svc            ClusterIP   10.108.244.202   <none>        8888/TCP          23h
+default       blog-site-svc          NodePort    10.101.238.139   <none>        8888:31002/TCP    1d
+default       blog-wp-svc            NodePort    10.110.104.155   <none>        8888:31005/TCP    23h
+default       hpa-example            NodePort    10.97.63.245     <none>        31999:31999/TCP   20h
+default       kubernetes             ClusterIP   10.96.0.1        <none>        443/TCP           180d
+kube-system   heapster               ClusterIP   10.105.122.5     <none>        80/TCP            13d
+kube-system   kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP     180d
+kube-system   kubernetes-dashboard   NodePort    10.110.62.108    <none>        80:30000/TCP      180d
+kube-system   metrics-server         ClusterIP   10.96.28.195     <none>        443/TCP           35d
+kube-system   monitoring-grafana     NodePort    10.98.71.12      <none>        80:30441/TCP      13d
+kube-system   monitoring-influxdb    ClusterIP   10.105.210.138   <none>        8086/TCP          13d
+monitoring    prometheus-service     NodePort    10.96.180.190    <none>        8080:30001/TCP    35d
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get svc --all-namespacesdescribek--all-namespacesu--all-namespacesb--all-namespacese--all-namespacesr--all-namespacesn--all-namespacese--all-namespacest--all-namespacese--all-namespacess--all-namespaces-all-namespacesd--all-namespacesa--all-namespacess--all-namespacesh--all-namespacesb--all-namespaceso--all-namespacesa--all-namespacesr--all-namespacesd--all-namespaces --all-namespaces
+error: a resource cannot be retrieved by name across all namespaces
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl describe svc kubernetes-dashboard --all-namespacesn kube-system
+Name:                     kubernetes-dashboard
+Namespace:                kube-system
+Labels:                   addonmanager.kubernetes.io/mode=Reconcile
+                          app=kubernetes-dashboard
+                          kubernetes.io/minikube-addons=dashboard
+                          kubernetes.io/minikube-addons-endpoint=dashboard
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","app":"kubernetes-dashboard","...
+Selector:                 app=kubernetes-dashboard
+Type:                     NodePort
+IP:                       10.110.62.108
+Port:                     <unset>  80/TCP
+TargetPort:               9090/TCP
+NodePort:                 <unset>  30000/TCP
+Endpoints:                
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods -n kybe-yube-system
+NAME                                    READY     STATUS             RESTARTS   AGE
+heapster-546c9964c6-xvhwj               1/1       Running            14         90d
+kube-addon-manager-minikube             1/1       Running            18         180d
+kube-dns-54cccfbdf8-2668s               1/3       CrashLoopBackOff   293        180d
+kubernetes-dashboard-77d8b98585-r49bq   0/1       CrashLoopBackOff   144        180d
+metrics-server-bb9ffc6b8-5b9xj          1/1       Running            11         35d
+monitoring-grafana-65757b9656-pdf4r     1/1       Running            14         90d
+monitoring-influxdb-66946c9f58-j2fn2    1/1       Running            14         90d
+storage-provisioner                     1/1       Running            18         180d
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl minikube stop
+Stopping local Kubernetes cluster...
+Machine stopped.
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikube stopart
+Starting local Kubernetes v1.9.0 cluster...
+Starting VM...
+Getting VM IP address...
+Moving files into cluster...
+Setting up certs...
+Connecting to cluster...
+Setting up kubeconfig...
+Starting cluster components...
+Kubectl is now configured to use the cluster.
+Loading cached images from config file.
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikube addons enable default-storageclass
+default-storageclass was successfully enabled
+Dell lap@Dell /d/docker-workshop/aug6
+λ minikube addons enable default-storageclass
+startminikube stop
+kubectl get pods -n kube-system
+describe svc kubernetes-dashboard-all-namespacesn kube-system
+Unable to connect to the server: dial tcp 192.168.99.101:8443: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl describe svc kubernetes-dashboard -n kube-systemget pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          19m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get podsdescribe svc kubernetes-dashboard -n kube-system
+Name:                     kubernetes-dashboard
+Namespace:                kube-system
+Labels:                   addonmanager.kubernetes.io/mode=Reconcile
+                          app=kubernetes-dashboard
+                          kubernetes.io/minikube-addons=dashboard
+                          kubernetes.io/minikube-addons-endpoint=dashboard
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","app":"kubernetes-dashboard","...
+Selector:                 app=kubernetes-dashboard
+Type:                     NodePort
+IP:                       10.110.62.108
+Port:                     <unset>  80/TCP
+TargetPort:               9090/TCP
+NodePort:                 <unset>  30000/TCP
+Endpoints:                172.17.0.4:9090
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f configmap/.
+pod "config-map-test" created
+Error from server (AlreadyExists): error when creating "configmap\\configmap-1.yml": configmaps "myconfig" already exists
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f configmap/.
+kubect l get pods
+NAME                                    READY     STATUS             RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running            2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running            7          1d
+blog-wp-56747cc969-skjh6                1/1       Running            44         23h
+config-map-test                         0/1       CrashLoopBackOff   3          1m
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating        3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running            2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running            1          31m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubect l logs config-map-test
+BLOG_SITE_SVC_SERVICE_HOST=10.101.238.139
+BLOG_DB_SVC_PORT_8888_TCP_PORT=8888
+BLOG_DB_SVC_PORT_8888_TCP_PROTO=tcp
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_SERVICE_PORT=443
+BLOG_WP_SVC_PORT_8888_TCP=tcp://10.110.104.155:8888
+HOSTNAME=config-map-test
+SHLVL=1
+HOME=/root
+BLOG_SITE_SVC_PORT=tcp://10.101.238.139:8888
+HPA_EXAMPLE_PORT_31999_TCP_ADDR=10.97.63.245
+BLOG_SITE_SVC_SERVICE_PORT=8888
+BLOG_DB_SVC_PORT_8888_TCP=tcp://10.108.244.202:8888
+HPA_EXAMPLE_PORT_31999_TCP_PORT=31999
+HPA_EXAMPLE_PORT_31999_TCP_PROTO=tcp
+BLOG_WP_SVC_SERVICE_HOST=10.110.104.155
+BLOG_SITE_SVC_PORT_8888_TCP_ADDR=10.101.238.139
+NGINX_VERSION=1.13.8
+HPA_EXAMPLE_PORT_31999_TCP=tcp://10.97.63.245:31999
+BLOG_SITE_SVC_PORT_8888_TCP_PORT=8888
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+BLOG_SITE_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_DB_SVC_SERVICE_HOST=10.108.244.202
+BLOG_WP_SVC_SERVICE_PORT=8888
+BLOG_WP_SVC_PORT=tcp://10.110.104.155:8888
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HPA_EXAMPLE_SERVICE_HOST=10.97.63.245
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+BLOG_DB_SVC_PORT=tcp://10.108.244.202:8888
+BLOG_DB_SVC_SERVICE_PORT=8888
+SPECIAL_LEVEL_KEY=HELLOTHERE
+BLOG_SITE_SVC_PORT_8888_TCP=tcp://10.101.238.139:8888
+HPA_EXAMPLE_SERVICE_PORT=31999
+HPA_EXAMPLE_PORT=tcp://10.97.63.245:31999
+BLOG_WP_SVC_PORT_8888_TCP_ADDR=10.110.104.155
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+PWD=/
+KUBERNETES_SERVICE_HOST=10.96.0.1
+BLOG_WP_SVC_PORT_8888_TCP_PORT=8888
+BLOG_WP_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_DB_SVC_PORT_8888_TCP_ADDR=10.108.244.202
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl logs config-map-test | grep -i myenv
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl logs config-map-test | grep -i myenv
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl logs config-map-test | grep -i myenv
+BLOG_SITE_SVC_SERVICE_HOST=10.101.238.139
+BLOG_DB_SVC_PORT_8888_TCP_PORT=8888
+KUBERNETES_SERVICE_PORT=443
+BLOG_DB_SVC_PORT_8888_TCP_PROTO=tcp
+KUBERNETES_PORT=tcp://10.96.0.1:443
+BLOG_WP_SVC_PORT_8888_TCP=tcp://10.110.104.155:8888
+HOSTNAME=config-map-test
+SHLVL=1
+HOME=/root
+HPA_EXAMPLE_PORT_31999_TCP_ADDR=10.97.63.245
+BLOG_SITE_SVC_PORT=tcp://10.101.238.139:8888
+BLOG_SITE_SVC_SERVICE_PORT=8888
+BLOG_DB_SVC_PORT_8888_TCP=tcp://10.108.244.202:8888
+HPA_EXAMPLE_PORT_31999_TCP_PORT=31999
+HPA_EXAMPLE_PORT_31999_TCP_PROTO=tcp
+BLOG_WP_SVC_SERVICE_HOST=10.110.104.155
+BLOG_SITE_SVC_PORT_8888_TCP_ADDR=10.101.238.139
+NGINX_VERSION=1.13.8
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+HPA_EXAMPLE_PORT_31999_TCP=tcp://10.97.63.245:31999
+BLOG_SITE_SVC_PORT_8888_TCP_PORT=8888
+BLOG_DB_SVC_SERVICE_HOST=10.108.244.202
+BLOG_SITE_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_WP_SVC_SERVICE_PORT=8888
+BLOG_WP_SVC_PORT=tcp://10.110.104.155:8888
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HPA_EXAMPLE_SERVICE_HOST=10.97.63.245
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+BLOG_DB_SVC_SERVICE_PORT=8888
+BLOG_DB_SVC_PORT=tcp://10.108.244.202:8888
+SPECIAL_LEVEL_KEY=HELLOTHERE
+BLOG_SITE_SVC_PORT_8888_TCP=tcp://10.101.238.139:8888
+HPA_EXAMPLE_PORT=tcp://10.97.63.245:31999
+HPA_EXAMPLE_SERVICE_PORT=31999
+BLOG_WP_SVC_PORT_8888_TCP_ADDR=10.110.104.155
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+PWD=/
+BLOG_WP_SVC_PORT_8888_TCP_PORT=8888
+KUBERNETES_SERVICE_HOST=10.96.0.1
+BLOG_WP_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_DB_SVC_PORT_8888_TCP_ADDR=10.108.244.202
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete -f myconfigmap/.
+configmap "myconfig" deleted
+pod "config-map-test" deleted
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete -f configmap/.
+logs config-map-test | grep -i myenv
+get podscreate -f configmap/.
+configmap "myconfig" created
+Error from server (AlreadyExists): error when creating "configmap\\pod-configmap.yml": object is being deleted: pods "config-map-test" already exists
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f configmap/.
+pod "config-map-test" created
+Error from server (AlreadyExists): error when creating "configmap\\configmap-1.yml": configmaps "myconfig" already exists
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS             RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running            2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running            7          1d
+blog-wp-56747cc969-skjh6                1/1       Running            44         23h
+config-map-test                         0/1       CrashLoopBackOff   1          15s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating        3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running            2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running            1          33m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kullill kubectl delte podete pod config-map-test
+pod "config-map-test" deleted
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl delete pod config-map-test
+get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+config-map-test                         0/1       Terminating   2          30s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          33m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+config-map-test                         0/1       Terminating   2          33s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          33m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+config-map-test                         0/1       Terminating   2          36s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          33m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+config-map-test                         0/1       Terminating   2          53s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          34m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+config-map-test                         0/1       Terminating   2          56s
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          34m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods
+NAME                                    READY     STATUS        RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running       2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running       7          1d
+blog-wp-56747cc969-skjh6                1/1       Running       44         23h
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating   3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running       2          20h
+mysql-7768cd7f88-2tfrp                  1/1       Running       1          35m
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get podsdelete pod config-map-test
+get podscreate -f configmap/.
+pod "config-map-test" created
+Error from server (AlreadyExists): error when creating "configmap\\configmap-1.yml": configmaps "myconfig" already exists
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl create -f configmap/.
+get podsdelete pod config-map-test
+get podscreate -f configmap/.
+dele
+logs config-map-test | grep -i myenv
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl logs config-map-test | grep -i myenvt
+BLOG_SITE_SVC_SERVICE_HOST=10.101.238.139
+BLOG_DB_SVC_PORT_8888_TCP_PORT=8888
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_SERVICE_PORT=443
+BLOG_DB_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_WP_SVC_PORT_8888_TCP=tcp://10.110.104.155:8888
+HOSTNAME=config-map-test
+SHLVL=1
+HOME=/root
+BLOG_SITE_SVC_PORT=tcp://10.101.238.139:8888
+BLOG_SITE_SVC_SERVICE_PORT=8888
+HPA_EXAMPLE_PORT_31999_TCP_ADDR=10.97.63.245
+BLOG_DB_SVC_PORT_8888_TCP=tcp://10.108.244.202:8888
+HPA_EXAMPLE_PORT_31999_TCP_PORT=31999
+HPA_EXAMPLE_PORT_31999_TCP_PROTO=tcp
+BLOG_WP_SVC_SERVICE_HOST=10.110.104.155
+BLOG_SITE_SVC_PORT_8888_TCP_ADDR=10.101.238.139
+NGINX_VERSION=1.13.8
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+HPA_EXAMPLE_PORT_31999_TCP=tcp://10.97.63.245:31999
+BLOG_SITE_SVC_PORT_8888_TCP_PORT=8888
+BLOG_SITE_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_DB_SVC_SERVICE_HOST=10.108.244.202
+BLOG_WP_SVC_SERVICE_PORT=8888
+BLOG_WP_SVC_PORT=tcp://10.110.104.155:8888
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+KUBERNETES_PORT_443_TCP_PORT=443
+HPA_EXAMPLE_SERVICE_HOST=10.97.63.245
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+BLOG_DB_SVC_SERVICE_PORT=8888
+BLOG_DB_SVC_PORT=tcp://10.108.244.202:8888
+SPECIAL_LEVEL_KEY=HELLOTHERE
+BLOG_SITE_SVC_PORT_8888_TCP=tcp://10.101.238.139:8888
+HPA_EXAMPLE_PORT=tcp://10.97.63.245:31999
+HPA_EXAMPLE_SERVICE_PORT=31999
+BLOG_WP_SVC_PORT_8888_TCP_ADDR=10.110.104.155
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+PWD=/
+BLOG_WP_SVC_PORT_8888_TCP_PORT=8888
+KUBERNETES_SERVICE_HOST=10.96.0.1
+BLOG_WP_SVC_PORT_8888_TCP_PROTO=tcp
+BLOG_DB_SVC_PORT_8888_TCP_ADDR=10.108.244.202
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl logs config-map-test
+kbuecubectl get pods
+NAME                                    READY     STATUS             RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running            2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running            7          1d
+blog-wp-56747cc969-skjh6                1/1       Running            44         1d
+config-map-test                         0/1       CrashLoopBackOff   21         1h
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating        3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running            2          22h
+mysql-7768cd7f88-2tfrp                  1/1       Running            1          2h
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubcectl describe pod mysql-7768cd7f88-2tfrp
+Name:           mysql-7768cd7f88-2tfrp
+Namespace:      default
+Node:           minikube/192.168.99.101
+Start Time:     Fri, 10 Aug 2018 10:32:49 +0530
+Labels:         app=mysql
+                pod-template-hash=3324783944
+Annotations:    <none>
+Status:         Running
+IP:             172.17.0.12
+Controlled By:  ReplicaSet/mysql-7768cd7f88
+Containers:
+  mysql:
+    Container ID:   docker://5e50326f357a33d50b006bc14012f7562dde10a3ea96f10480f64107d6b9ee1e
+    Image:          mysql:5.7
+    Image ID:       docker-pullable://mysql@sha256:e8f85df0b02606e573ad3dfa31ad6dd1d659ad72ea927f8f307b28fa19ab9cc5
+    Port:           3306/TCP
+    State:          Running
+      Started:      Fri, 10 Aug 2018 10:51:07 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Fri, 10 Aug 2018 10:32:50 +0530
+      Finished:     Fri, 10 Aug 2018 10:49:02 +0530
+    Ready:          True
+    Restart Count:  1
+    Environment:
+      MYSQL_ROOT_PASSWORD:  password
+    Mounts:
+      /var/lib/mysql from mysql-persistent-storage (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-ldpc4 (ro)
+Conditions:
+  Type           Status
+  Initialized    True 
+  Ready          True 
+  PodScheduled   True 
+Volumes:
+  mysql-persistent-storage:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  mysql-pv-claim
+    ReadOnly:   false
+  default-token-ldpc4:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-ldpc4
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     <none>
+Events:          <none>
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl describe pod mysql-7768cd7f88-2tfrp
+get pods
+NAME                                    READY     STATUS             RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                1/1       Running            2          1d
+blog-site-7f57d97cd5-v7d4p              2/2       Running            7          1d
+blog-wp-56747cc969-skjh6                1/1       Running            44         1d
+config-map-test                         0/1       CrashLoopBackOff   21         1h
+helloworld-deployment-969b548b9-qpnb7   0/1       Terminating        3          1d
+hpa-example-797dfdbc87-nshlb            1/1       Running            2          22h
+mysql-7768cd7f88-2tfrp                  1/1       Running            1          2h
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods blog-wp-56747cc969-skjh6
+NAME                       READY     STATUS    RESTARTS   AGE
+blog-wp-56747cc969-skjh6   1/1       Running   44         1d
+Dell lap@Dell /d/docker-workshop/aug6
+λ kubectl get pods blog-wp-56747cc969-skjh6describe 
+Name:           blog-wp-56747cc969-skjh6
+Namespace:      default
+Node:           minikube/192.168.99.101
+Start Time:     Thu, 09 Aug 2018 11:21:08 +0530
+Labels:         app=blog-wp
+                pod-template-hash=1230377525
+Annotations:    <none>
+Status:         Running
+IP:             172.17.0.7
+Controlled By:  ReplicaSet/blog-wp-56747cc969
+Containers:
+  wp:
+    Container ID:   docker://515df755539a47c7dc941f5acc4effdd10797a09bce4a3d7bce84f972b05e818
+    Image:          wordpress:php7.0
+    Image ID:       docker-pullable://wordpress@sha256:56e4ac2358ebd1ac89d90f208e081990b8bb0a2b6cc86c037d25846b78e2a67d
+    Port:           80/TCP
+    State:          Running
+      Started:      Fri, 10 Aug 2018 10:51:04 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Fri, 10 Aug 2018 10:48:28 +0530
+      Finished:     Fri, 10 Aug 2018 10:49:02 +0530
+    Ready:          True
+    Restart Count:  44
+    Environment:
+      WORDPRESS_DB_USER:      root
+      WORDPRESS_DB_PASSWORD:  <set to the key 'db-password' in secret 'blog-secrets'>  Optional: false
+      WORDPRESS_DB_HOST:      blog-db-svc:8888
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-ldpc4 (ro)
+Conditions:
+  Type           Status
+  Initialized    True 
+  Ready          True 
+  PodScheduled   True 
+Volumes:
+  default-token-ldpc4:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-ldpc4
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     <none>
+Events:          <none>
+Dell lap@Dell /d/docker-workshop/aug6
+λ cd ingress/
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ ls
+2.yml             helloworld-v1.yml  ingress.yml
+echo-service.yml  helloworld-v2.yml  ingress-controller.yml
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ vi helloworld-v1.yml 
+
+"helloworld-v1.yml" [noeol][dos] 32L, 593C
+▽
+  
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld-v1-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:labels:app: helloworld-v1
+    spec:containers:- name: k8s-demoimage: wardviaene/k8s-demo:latestports:- name: nodejs-portcontainerPort: 3000
+---
+/d/docker-workshop/aug6/ingress/helloworld-v1.yml [dos] (20:24 08/08/2018)         1,1 Top
+:
+:q!
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ vi ingress.yml 
+
+"ingress.yml" [noeol][dos] 21L, 466C
+▽
+  
+# An Ingress with 2 hosts and 3 endpoints
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: helloworld-rules
+spec:
+  rules:
+  - host: helloworld-v1.example.com
+    http:paths:- path: /backend:serviceName: helloworld-v1servicePort: 80
+  - host: helloworld-v2.example.com
+    http:paths:- path: /
+/d/docker-workshop/aug6/ingress/ingress.yml [dos] (20:26 08/08/2018)               1,1 Top
+~@k
+   
+2
+~@k
+   
+3
+~@k
+   
+4
+~@k
+   
+5
+~@k
+   
+6
+~@k
+   
+7
+~@k
+   
+8
+~@k
+   
+9
+~@k
+   
+8
+~@k
+   2~@k   3~@k   4~@k   5~@k   6~@k   7~@k   8~@k   9~@k   8,10~@k   1^[[1;2C       2C  2c$   
+-- INSERT --
+- ostbackend:[+] [dos] (20:26 08/08/2018)
+          - host: :20e1!2
+9,13
+^[
+  9,0-1
+:
+:
+`
+:
+E78: Unknown mark
+q
+~@k
+    
+e
+ 10,1!
+^M   
+:.,.+1!e!
+"ingress.yml" [noeol][dos] 21L, 466C
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: helloworld-rules
+spec:
+  rules:
+  - host: helloworld-v1.example.com
+    http:paths:- path: /  backend:  serviceName: helloworld-v1Port80- host: helloworld-v2.example.com
+    ttp  paths:- path: /  backend: [dos] (20:26 08/08/2018)   33%~@k     9,9~@k   8,11:
+:q!
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ ckubectl create -f helloworld-v* 
+error: Unexpected args: [helloworld-v2.yml]
+See 'kubectl create -h' for help and examples.
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f helloworld-v* 1.yml -f helloworld-v2.yml 
+deployment "helloworld-v1-deployment" created
+service "helloworld-v1" created
+deployment "helloworld-v2-deployment" created
+service "helloworld-v2" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ dkubectl create -f nginc
+2.yml                   helloworld-v1.yml       ingress.yml
+echo-service.yml        helloworld-v2.yml       ingress-controller.yml
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress-controller.yml 
+daemonset "nginx-ingress-controller" created
+configmap "nginx-configuration" created
+configmap "tcp-services" created
+configmap "udp-services" created
+serviceaccount "nginx-ingress-serviceaccount" created
+clusterrole "nginx-ingress-clusterrole" created
+role "nginx-ingress-role" created
+rolebinding "nginx-ingress-role-nisa-binding" created
+clusterrolebinding "nginx-ingress-clusterrole-nisa-binding" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress-controller.yml echo-service.yml 
+replicationcontroller "echoheaders" created
+service "echoheaders-default" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f echo-service.yml ingress.yml 
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl get ingress
+NAME               HOSTS                                                 ADDRESS   PORTS     AGE
+helloworld-rules   helloworld-v1.example.com,helloworld-v1.example.com             80        1m
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl get ingresspods
+NAME                                        READY     STATUS             RESTARTS   AGE
+blog-db-54565c8fc8-2ddtq                    1/1       Running            2          1d
+blog-site-7f57d97cd5-v7d4p                  2/2       Running            7          1d
+blog-wp-56747cc969-skjh6                    1/1       Running            44         1d
+config-map-test                             0/1       CrashLoopBackOff   10         3h
+echoheaders-wwjf7                           1/1       Running            0          1m
+helloworld-v1-deployment-d788d98b5-tkpld    1/1       Running            0          2m
+helloworld-v2-deployment-565f848b9f-58ztk   1/1       Running            0          2m
+hpa-example-797dfdbc87-nshlb                1/1       Running            2          1d
+mysql-7768cd7f88-2tfrp                      1/1       Running            1          4h
+nginx-ingress-controller-nr2hb              1/1       Running            2          1m
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl get servc
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+blog-db-svc           ClusterIP   10.108.244.202   <none>        8888/TCP          1d
+blog-site-svc         NodePort    10.101.238.139   <none>        8888:31002/TCP    1d
+blog-wp-svc           NodePort    10.110.104.155   <none>        8888:31005/TCP    1d
+echoheaders-default   NodePort    10.97.229.163    <none>        80:30302/TCP      1m
+helloworld-v1         NodePort    10.104.25.251    <none>        80:30303/TCP      2m
+helloworld-v2         NodePort    10.103.80.216    <none>        80:30304/TCP      2m
+hpa-example           NodePort    10.97.63.245     <none>        31999:31999/TCP   1d
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP           180d
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl describbe service helloworld-v1
+Name:                     helloworld-v1
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=helloworld-v1
+Type:                     NodePort
+IP:                       10.104.25.251
+Port:                     http  80/TCP
+TargetPort:               80/TCP
+NodePort:                 http  30303/TCP
+Endpoints:                172.17.0.17:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl ddelete ingress -f ingress.yml 
+ingress "helloworld-rules" deleted
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f ingress.yml crea
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl detellete -f *
+error: when paths, URLs, or stdin is provided as input, you may not specify resource arguments as well
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f *.
+clusterrole "nginx-ingress-clusterrole" deleted
+clusterrolebinding "nginx-ingress-clusterrole-nisa-binding" deleted
+replicationcontroller "echoheaders" deleted
+service "echoheaders-default" deleted
+deployment "helloworld-v1-deployment" deleted
+service "helloworld-v1" deleted
+deployment "helloworld-v2-deployment" deleted
+service "helloworld-v2" deleted
+daemonset "nginx-ingress-controller" deleted
+configmap "nginx-configuration" deleted
+configmap "tcp-services" deleted
+configmap "udp-services" deleted
+serviceaccount "nginx-ingress-serviceaccount" deleted
+role "nginx-ingress-role" deleted
+rolebinding "nginx-ingress-role-nisa-binding" deleted
+ingress "helloworld-rules" deleted
+Error from server (NotFound): error when stopping "2.yml": deployments.extensions "default-http-backend" not found
+Error from server (NotFound): error when deleting "2.yml": services "default-http-backend" not found
+Error from server (NotFound): error when deleting "2.yml": configmaps "nginx-configuration" not found
+Error from server (NotFound): error when deleting "2.yml": configmaps "tcp-services" not found
+Error from server (NotFound): error when deleting "2.yml": configmaps "udp-services" not found
+Error from server (NotFound): error when deleting "2.yml": serviceaccounts "nginx-ingress-serviceaccount" not found
+Error from server (NotFound): error when deleting "2.yml": roles.rbac.authorization.k8s.io "nginx-ingress-role" not found
+Error from server (NotFound): error when deleting "2.yml": rolebindings.rbac.authorization.k8s.io "nginx-ingress-role-nisa-binding" not found
+Error from server (NotFound): error when stopping "2.yml": deployments.extensions "nginx-ingress-controller" not found
+Error from server (NotFound): error when deleting "ingress-controller.yml": clusterroles.rbac.authorization.k8s.io "nginx-ingress-clusterrole" not found
+Error from server (NotFound): error when deleting "ingress-controller.yml": clusterrolebindings.rbac.authorization.k8s.io "nginx-ingress-clusterrole-nisa-binding" not found
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f .*.
+kubectl delete -f .
+(reverse-i-search)`':R': minikube start --extra-config=apiserver.Authorization.Mode=RBAC
+B
+A
+C
+λ
+#
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ #minikube start --extra-config=apiserver.Authorization.Mode=RBAC
+kubectl delete -f .*create -f ingress.yml 
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress.yml 
+#minikube start --extra-config=apiserver.Authorization.Mode=RBAC
+kubectl delete -f . create -f .
+clusterrole "nginx-ingress-clusterrole" created
+clusterrolebinding "nginx-ingress-clusterrole-nisa-binding" created
+replicationcontroller "echoheaders" created
+service "echoheaders-default" created
+deployment "helloworld-v1-deployment" created
+service "helloworld-v1" created
+deployment "helloworld-v2-deployment" created
+service "helloworld-v2" created
+daemonset "nginx-ingress-controller" created
+configmap "nginx-configuration" created
+configmap "tcp-services" created
+configmap "udp-services" created
+serviceaccount "nginx-ingress-serviceaccount" created
+role "nginx-ingress-role" created
+rolebinding "nginx-ingress-role-nisa-binding" created
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (NotFound): error when creating "2.yml": namespaces "ingress-nginx" not found
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": clusterroles.rbac.authorization.k8s.io "nginx-ingress-clusterrole" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": clusterrolebindings.rbac.authorization.k8s.io "nginx-ingress-clusterrole-nisa-binding" already exists
+Error from server (AlreadyExists): error when creating "ingress.yml": ingresses.extensions "helloworld-rules" already exists
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f .rm 2.yml 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ rm 2.yml 
+kubectl create -f .
+Error from server (AlreadyExists): error when creating "echo-service.yml": replicationcontrollers "echoheaders" already exists
+Error from server (Invalid): error when creating "echo-service.yml": Service "echoheaders-default" is invalid: spec.ports[0].nodePort: Invalid value: 30302: provided port is already allocated
+Error from server (AlreadyExists): error when creating "helloworld-v1.yml": deployments.extensions "helloworld-v1-deployment" already exists
+Error from server (Invalid): error when creating "helloworld-v1.yml": Service "helloworld-v1" is invalid: spec.ports[0].nodePort: Invalid value: 30303: provided port is already allocated
+Error from server (AlreadyExists): error when creating "helloworld-v2.yml": deployments.extensions "helloworld-v2-deployment" already exists
+Error from server (Invalid): error when creating "helloworld-v2.yml": Service "helloworld-v2" is invalid: spec.ports[0].nodePort: Invalid value: 30304: provided port is already allocated
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": daemonsets.extensions "nginx-ingress-controller" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": configmaps "nginx-configuration" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": configmaps "tcp-services" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": configmaps "udp-services" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": serviceaccounts "nginx-ingress-serviceaccount" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": clusterroles.rbac.authorization.k8s.io "nginx-ingress-clusterrole" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": roles.rbac.authorization.k8s.io "nginx-ingress-role" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": rolebindings.rbac.authorization.k8s.io "nginx-ingress-role-nisa-binding" already exists
+Error from server (AlreadyExists): error when creating "ingress-controller.yml": clusterrolebindings.rbac.authorization.k8s.io "nginx-ingress-clusterrole-nisa-binding" already exists
+Error from server (AlreadyExists): error when creating "ingress.yml": ingresses.extensions "helloworld-rules" already exists
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f .dele
+replicationcontroller "echoheaders" deleted
+service "echoheaders-default" deleted
+deployment "helloworld-v1-deployment" deleted
+service "helloworld-v1" deleted
+deployment "helloworld-v2-deployment" deleted
+service "helloworld-v2" deleted
+daemonset "nginx-ingress-controller" deleted
+configmap "nginx-configuration" deleted
+configmap "tcp-services" deleted
+configmap "udp-services" deleted
+serviceaccount "nginx-ingress-serviceaccount" deleted
+clusterrole "nginx-ingress-clusterrole" deleted
+role "nginx-ingress-role" deleted
+rolebinding "nginx-ingress-role-nisa-binding" deleted
+clusterrolebinding "nginx-ingress-clusterrole-nisa-binding" deleted
+ingress "helloworld-rules" deleted
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ng
+echo-service.yml        helloworld-v2.yml       ingress-controller.yml
+helloworld-v1.yml       ingress.yml             
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress-controller.yml 
+daemonset "nginx-ingress-controller" created
+configmap "nginx-configuration" created
+configmap "tcp-services" created
+configmap "udp-services" created
+serviceaccount "nginx-ingress-serviceaccount" created
+clusterrole "nginx-ingress-clusterrole" created
+role "nginx-ingress-role" created
+rolebinding "nginx-ingress-role-nisa-binding" created
+clusterrolebinding "nginx-ingress-clusterrole-nisa-binding" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f echo-service.yml 
+replicationcontroller "echoheaders" created
+service "echoheaders-default" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f helloworld-v1.yml 
+deployment "helloworld-v1-deployment" created
+service "helloworld-v1" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f helloworld-v1.yml 2.yml 
+deployment "helloworld-v2-deployment" created
+service "helloworld-v2" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f helloworld-v2.yml 1echo-serviceingress-controller.yml
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl describe ingress "helloworld-rules"
+Name:             helloworld-rules
+Namespace:        default
+Address:          
+Default backend:  default-http-backend:80 (<none>)
+Rules:
+  Host                       Path  Backends
+  ----                       ----  --------
+  helloworld-v1.example.com  
+                             /   helloworld-v1:80 (<none>)
+  helloworld-v2.example.com  
+                             /   helloworld-v2:80 (<none>)
+Annotations:
+Events:
+  Type    Reason  Age   From                      Message
+  ----    ------  ----  ----                      -------
+  Normal  CREATE  12s   nginx-ingress-controller  Ingress default/helloworld-rules
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl get svc
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+blog-db-svc           ClusterIP   10.108.244.202   <none>        8888/TCP          1d
+blog-site-svc         NodePort    10.101.238.139   <none>        8888:31002/TCP    1d
+blog-wp-svc           NodePort    10.110.104.155   <none>        8888:31005/TCP    1d
+echoheaders-default   NodePort    10.110.96.108    <none>        80:30302/TCP      1m
+helloworld-v1         NodePort    10.107.172.229   <none>        80:30303/TCP      1m
+helloworld-v2         NodePort    10.105.199.147   <none>        80:30304/TCP      1m
+hpa-example           NodePort    10.97.63.245     <none>        31999:31999/TCP   1d
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP           180d
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress.yml 
+Error from server (AlreadyExists): error when creating "ingress.yml": ingresses.extensions "helloworld-rules" already exists
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl create -f ingress.yml create
+Error from server (AlreadyExists): error when creating "ingress.yml": ingresses.extensions "helloworld-rules" already exists
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f ingress.yml 
+ingress "helloworld-rules" deleted
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f ingress.yml crea
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kucebectl delete -f ingress
+error: the path "ingress" does not exist
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f ingress.yml 
+ingress "helloworld-rules" deleted
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ kubectl delete -f ingress.yml crea
+ingress "helloworld-rules" created
+Dell lap@Dell /d/docker-workshop/aug6/ingress
+λ 
